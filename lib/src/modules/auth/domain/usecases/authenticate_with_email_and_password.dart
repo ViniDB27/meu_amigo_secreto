@@ -1,7 +1,10 @@
-import 'package:meu_amigo_secreto/src/modules/auth/domain/entities/account_entity.dart';
+import 'package:dartz/dartz.dart';
 
-abstract class AuthenticateWithEmailAndPassword {
-  Future<AccountEntity> auth(
+import '../entities/account_entity.dart';
+import '../errors/errors.dart';
+
+abstract class IAuthenticateWithEmailAndPassword {
+  Future<Either<AuthException, AccountEntity>> call(
       {required AuthenticateWithEmailAndPasswordParams params});
 }
 
