@@ -2,14 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/errors.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/infra/datasources/account_datasource.dart';
 
-class AccountDatasourceImpl extends IAccountDatasource {
+class AccountDatasourceFirebaseImpl extends IAccountDatasource {
+  final FirebaseAuth firebaseAuth;
+
+  AccountDatasourceFirebaseImpl({required this.firebaseAuth});
+
   @override
   Future<Map> login({
     required String email,
     required String password,
   }) async {
     try {
-      final account = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final account = await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
