@@ -38,7 +38,7 @@ void main() {
         .thenAnswer((_) async => right(AccountEntity(
               id: '1',
               name: 'Test Success',
-              token: 'sakdjkfdkfjdksakldfjklsdjfkls',
+              token: '123456',
             )));
 
     final result = await sut(params: params);

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "613142243763",
+    "project_id": "meu-amigo-secreto-5135f",
+    "storage_bucket": "meu-amigo-secreto-5135f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613142243763:android:207980e6603ec4268f83c6",
+        "android_client_info": {
+          "package_name": "com.example.meu_amigo_secreto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613142243763-j56nmq0s1786p6s4l6cua2mu2j7ps30v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD50Q_M5jfSo0XR04FpRl4I_dsCZMIXa-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613142243763-j56nmq0s1786p6s4l6cua2mu2j7ps30v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
