@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 
@@ -11,6 +12,8 @@ import './pages/signin_page.dart';
 class AuthModule extends Module {
   @override
   List<Bind> get binds => [
+    //utils
+    Bind.singleton((i) => FirebaseAuth.instance),
     //datasources
     Bind.factory((i) => AccountDatasourceFirebaseImpl(i())),
     //repositories
