@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/auth_errors.dart';
-import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
-import 'package:meu_amigo_secreto/src/modules/auth/infra/datasources/account_datasource.dart';
+
+import '../../domain/errors/auth_errors.dart';
+import '../../domain/usecases/authenticate_with_email_and_password.dart';
+
+import '../../infra/datasources/account_datasource.dart';
 
 class AccountDatasourceFirebaseImpl extends AccountDatasource {
   final FirebaseAuth firebaseAuth;
