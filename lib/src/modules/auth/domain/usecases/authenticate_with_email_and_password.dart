@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 
+import '../errors/auth_errors.dart';
 import '../entities/account_entity.dart';
-import '../errors/errors.dart';
 
-abstract class IAuthenticateWithEmailAndPassword {
+abstract class AuthenticateWithEmailAndPassword {
   Future<Either<AuthException, AccountEntity>> call(
       {required AuthenticateWithEmailAndPasswordParams params});
 }

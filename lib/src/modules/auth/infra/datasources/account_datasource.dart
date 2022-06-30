@@ -1,6 +1,5 @@
-abstract class IAccountDatasource {
-  Future<Map> login({
-    required String email,
-    required String password,
-  });
+import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
+
+abstract class AccountDatasource {
+  Future<Map> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordParams params);
 }

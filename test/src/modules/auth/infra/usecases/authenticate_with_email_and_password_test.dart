@@ -5,15 +5,15 @@ import 'package:dartz/dartz.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/repositories/auth_repository.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/entities/account_entity.dart';
-import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/errors.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/auth_errors.dart';
 
-import 'package:meu_amigo_secreto/src/modules/auth/infra/usecases/authenticate_with_email_and_password_impl.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/infra/usecases/authenticate_with_email_and_password_firebase.dart';
 
-class AuthRepositorySpy extends Mock implements IAuthRepository {}
+class AuthRepositorySpy extends Mock implements AuthRepository {}
 
 void main() {
-  late IAuthRepository repository;
-  late IAuthenticateWithEmailAndPassword sut;
+  late AuthRepository repository;
+  late AuthenticateWithEmailAndPassword sut;
 
   AuthenticateWithEmailAndPasswordParams params({
     String email = 'testando@testando.com',
@@ -23,22 +23,22 @@ void main() {
 
   setUp(() {
     repository = AuthRepositorySpy();
-    sut = AuthenticateWithEmailAndPassword(repository: repository);
+    sut = AuthenticateWithEmailAndPasswordOnFirebase(repository);
   });
 
   test('Should return an AccountEntity if success', () async {
     final repository = AuthRepositorySpy();
-    final sut = AuthenticateWithEmailAndPassword(repository: repository);
+    final sut = AuthenticateWithEmailAndPasswordOnFirebase(repository);
     final params = AuthenticateWithEmailAndPasswordParams(
       email: 'testando@testando.com',
       password: '123456',
     );
 
-    when(() => repository.login(params: params))
+    when(() => repository.signInWithEmailAndPasswordParams(params))
         .thenAnswer((_) async => right(AccountEntity(
               id: '1',
-              name: 'Test Success',
-              token: '123456',
+              name: 'testando@testando.com',
+              email: '123456',
             )));
 
     final result = await sut(params: params);

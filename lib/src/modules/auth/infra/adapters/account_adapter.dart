@@ -6,6 +6,6 @@ class AccountAdapter {
   static AccountEntity fromJson(Map json) => AccountEntity(
         id: json['id'],
         name: json['name'],
-        token: json['token'],
+        email: json['email'],
       );
 }
