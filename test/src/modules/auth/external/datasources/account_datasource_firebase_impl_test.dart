@@ -1,10 +1,10 @@
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/auth_errors.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/auth_errors.dart';
 
 import 'package:meu_amigo_secreto/src/modules/auth/infra/datasources/account_datasource.dart';
 

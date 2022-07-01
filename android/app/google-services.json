@@ -29,6 +29,13 @@
             {
               "client_id": "613142243763-j56nmq0s1786p6s4l6cua2mu2j7ps30v.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "613142243763-55agfe33j0b5vc68b489oj4prfq6ne02.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.meuAmigoSecreto"
+              }
             }
           ]
         }
