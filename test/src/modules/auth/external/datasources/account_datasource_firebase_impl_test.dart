@@ -13,7 +13,7 @@ import 'package:meu_amigo_secreto/src/modules/auth/external/datasources/account_
 class FirebaseAuthSpy extends Mock implements FirebaseAuth {}
 
 void main() {
-  late AuthenticateWithEmailAndPasswordParams params;
+  late AuthenticateWithEmailAndPasswordCredentials params;
   late FirebaseAuth firebaseAuth;
   late AccountDatasource sut;
   late MockUser user;
@@ -23,7 +23,7 @@ void main() {
   setUp(() async {
     firebaseAuth = FirebaseAuthSpy();
     sut = AccountDatasourceFirebaseImpl(firebaseAuth);
-    params = AuthenticateWithEmailAndPasswordParams(
+    params = AuthenticateWithEmailAndPasswordCredentials(
       email: 'testando@testando.com',
       password: '123456',
     );

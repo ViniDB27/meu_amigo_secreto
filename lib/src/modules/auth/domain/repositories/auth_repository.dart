@@ -5,5 +5,5 @@ import '../entities/account_entity.dart';
 import '../errors/auth_errors.dart';
 
 abstract class AuthRepository {
-  Future<Either<AuthException, AccountEntity>> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordParams params);
+  Future<Either<AuthException, AccountEntity>> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordCredentials credentials);
 }

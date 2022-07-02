@@ -11,7 +11,7 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   AccountDatasourceFirebaseImpl(this.firebaseAuth);
 
   @override
-  Future<Map> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordParams params) async {
+  Future<Map> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordCredentials params) async {
     try {
       final account = await firebaseAuth.signInWithEmailAndPassword(
         email: params.email,

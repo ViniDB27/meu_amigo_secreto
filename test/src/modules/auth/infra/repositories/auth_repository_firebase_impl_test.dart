@@ -15,12 +15,12 @@ class AccountDatasourceSpy extends Mock implements AccountDatasource {}
 void main() {
   late AccountDatasource accountDatasource;
   late AuthRepository sut;
-  late AuthenticateWithEmailAndPasswordParams params;
+  late AuthenticateWithEmailAndPasswordCredentials params;
 
   setUp(() {
     accountDatasource = AccountDatasourceSpy();
     sut = AuthRepositoryFirebaseImpl(accountDatasource);
-    params = AuthenticateWithEmailAndPasswordParams(
+    params = AuthenticateWithEmailAndPasswordCredentials(
       email: 'testando@testando.com',
       password: '123456',
     );

@@ -14,9 +14,9 @@ class AuthRepositoryFirebaseImpl extends AuthRepository {
   AuthRepositoryFirebaseImpl(this.accountDatasource);
 
   @override
-  Future<Either<AuthException, AccountEntity>> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordParams params) async {
+  Future<Either<AuthException, AccountEntity>> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordCredentials credentials) async {
      try {
-      final map = await accountDatasource.signInWithEmailAndPasswordParams(params);
+      final map = await accountDatasource.signInWithEmailAndPasswordParams(credentials);
 
       final account = AccountAdapter.fromJson(map);
       return right(account);

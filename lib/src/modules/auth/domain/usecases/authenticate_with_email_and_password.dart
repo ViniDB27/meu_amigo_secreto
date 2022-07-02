@@ -5,14 +5,15 @@ import '../entities/account_entity.dart';
 
 abstract class AuthenticateWithEmailAndPassword {
   Future<Either<AuthException, AccountEntity>> call(
-      {required AuthenticateWithEmailAndPasswordParams params});
+    AuthenticateWithEmailAndPasswordCredentials credentials,
+  );
 }
 
-class AuthenticateWithEmailAndPasswordParams {
+class AuthenticateWithEmailAndPasswordCredentials {
   final String email;
   final String password;
 
-  AuthenticateWithEmailAndPasswordParams({
+  AuthenticateWithEmailAndPasswordCredentials({
     required this.email,
     required this.password,
   });

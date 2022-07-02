@@ -15,11 +15,14 @@ void main() {
   late AuthRepository repository;
   late AuthenticateWithEmailAndPassword sut;
 
-  AuthenticateWithEmailAndPasswordParams params({
+  AuthenticateWithEmailAndPasswordCredentials mockCredentials({
     String email = 'testando@testando.com',
     String password = '123456',
   }) =>
-      AuthenticateWithEmailAndPasswordParams(email: email, password: password);
+      AuthenticateWithEmailAndPasswordCredentials(
+        email: email,
+        password: password,
+      );
 
   setUp(() {
     repository = AuthRepositorySpy();
@@ -29,31 +32,31 @@ void main() {
   test('Should return an AccountEntity if success', () async {
     final repository = AuthRepositorySpy();
     final sut = AuthenticateWithEmailAndPasswordOnFirebase(repository);
-    final params = AuthenticateWithEmailAndPasswordParams(
+    final credentials = AuthenticateWithEmailAndPasswordCredentials(
       email: 'testando@testando.com',
       password: '123456',
     );
 
-    when(() => repository.signInWithEmailAndPasswordParams(params))
+    when(() => repository.signInWithEmailAndPasswordParams(credentials))
         .thenAnswer((_) async => right(AccountEntity(
               id: '1',
               name: 'testando@testando.com',
               email: '123456',
             )));
 
-    final result = await sut(params: params);
+    final result = await sut(credentials);
 
     expect(result.fold(id, id), isA<AccountEntity>());
   });
 
   test('Should throw AuthException if email is invalid', () async {
-    final result = await sut(params: params(email: ''));
+    final result = await sut(mockCredentials(email: ''));
 
     expect(result.fold(id, id), isA<AuthException>());
   });
 
   test('Should throw AuthException if password is invalid', () async {
-    final result = await sut(params: params(password: ''));
+    final result = await sut(mockCredentials(password: ''));
 
     expect(result.fold(id, id), isA<AuthException>());
   });

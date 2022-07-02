@@ -14,12 +14,11 @@ class AuthenticateWithEmailAndPasswordOnFirebase
 
   @override
   Future<Either<AuthException, AccountEntity>> call(
-      {required AuthenticateWithEmailAndPasswordParams params}) async {
-
-    if (!isEmail(params.email) || params.password.isEmpty) {
+      AuthenticateWithEmailAndPasswordCredentials credentials) async {
+    if (!isEmail(credentials.email) || credentials.password.isEmpty) {
       return left(InvalidCredentialException());
     }
 
-    return repository.signInWithEmailAndPasswordParams(params);
+    return repository.signInWithEmailAndPasswordParams(credentials);
   }
 }
