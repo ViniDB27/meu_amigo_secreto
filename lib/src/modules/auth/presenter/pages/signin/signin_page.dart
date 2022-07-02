@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/app_fonts.dart';
-import '../../../../shared/theme/app_images.dart';
-import '../../../../shared/theme/app_colors.dart';
+import '../../../../../shared/theme/app_fonts.dart';
+import '../../../../../shared/theme/app_images.dart';
+import '../../../../../shared/theme/app_colors.dart';
 
-import '../components/social_button.dart';
+import './components/social_button.dart';
+import './helper/auth_helper.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -20,61 +21,6 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-
-    Future<void> _forgotPasswordSucess() async {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Recuperação de senha'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: const <Widget>[
-                  Text(
-                      'Enviamos um email com o link para recuperar a sua senha.'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Confirmar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    Future<void> _authError(Exception error) async {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Credenciais Inválidas'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: const <Widget>[
-                  Text('Email ou Senha estão incorretas.'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Tentares Novamente'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
 
     return Scaffold(
       body: Container(
@@ -154,7 +100,7 @@ class _SignInPageState extends State<SignInPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: _forgotPasswordSucess,
+                            onPressed: () => AuthHelper.showForgotPasswordSuccessDialog(context),
                             child: Text(
                               "Esqueci minha senha!",
                               style: AppFonts.textForgotPassword,

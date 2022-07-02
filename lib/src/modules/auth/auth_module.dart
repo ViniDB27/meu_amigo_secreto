@@ -10,7 +10,7 @@ import 'infra/datasources/account_datasource.dart';
 
 import 'external/datasources/account_datasource_firebase_impl.dart';
 
-import 'presenter/pages/signin_page.dart';
+import 'presenter/pages/signin/signin_page.dart';
 
 class AuthModule extends Module {
   @override

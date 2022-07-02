@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/app_colors.dart';
-import '../../../../shared/theme/app_fonts.dart';
+import '../../../../../../shared/theme/app_colors.dart';
+import '../../../../../../shared/theme/app_fonts.dart';
 
 
 class SocialButton extends StatelessWidget {
