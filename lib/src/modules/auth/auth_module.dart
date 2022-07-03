@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'domain/usecases/authenticate_with_email_and_password.dart';
@@ -19,14 +20,20 @@ class AuthModule extends Module {
   List<Bind> get binds => [
         //utils
         Bind.instance<FirebaseAuth>(FirebaseAuth.instance),
+        Bind.instance<GoogleSignIn>(GoogleSignIn()),
         //datasources
-        Bind.factory<AccountDatasource>((i) => AccountDatasourceFirebaseImpl(i())),
+        Bind.factory<AccountDatasource>((i) => AccountDatasourceFirebaseImpl(
+              firebaseAuth: i(),
+              googleSignIn: i(),
+            )),
         //repositories
         Bind.factory<AuthRepository>((i) => AuthRepositoryFirebaseImpl(i())),
         //usecases
-        Bind.factory<AuthenticateWithEmailAndPassword>((i) => AuthenticateWithEmailAndPasswordImpl(i())),
+        Bind.factory<AuthenticateWithEmailAndPassword>(
+            (i) => AuthenticateWithEmailAndPasswordImpl(i())),
         //blocs
-        Bind.singleton<AuthenticateWithEmailAndPasswordBloc>((i) => AuthenticateWithEmailAndPasswordBloc(i()))
+        Bind.singleton<AuthenticateWithEmailAndPasswordBloc>(
+            (i) => AuthenticateWithEmailAndPasswordBloc(i()))
       ];
 
   @override

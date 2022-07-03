@@ -37,11 +37,11 @@ void main() {
       password: '123456',
     );
 
-    when(() => repository.signInWithEmailAndPasswordParams(credentials))
+    when(() => repository.signInWithEmailAndPassword(credentials))
         .thenAnswer((_) async => right(AccountEntity(
               id: '1',
-              name: 'testando@testando.com',
-              email: '123456',
+              name: 'test',
+              email: 'testando@testando.com',
             )));
 
     final result = await sut(credentials);

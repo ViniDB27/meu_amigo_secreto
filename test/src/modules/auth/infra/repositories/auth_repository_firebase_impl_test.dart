@@ -26,24 +26,54 @@ void main() {
     );
   });
 
-  test('Should return an AccountEntity if success', () async {
-    when(() => accountDatasource.signInWithEmailAndPasswordParams(params))
+  //Authenticate With Email And Password Tests
+  test(
+      'Authenticate With Email And Password: Should return an AccountEntity if success',
+      () async {
+    when(() => accountDatasource.signInWithEmailAndPassword(params))
         .thenAnswer((_) async => {
               'id': '1',
               'name': 'test',
               'email': 'testando@testando.com',
             });
 
-    final result = await sut.signInWithEmailAndPasswordParams(params);
+    final result = await sut.signInWithEmailAndPassword(params);
 
     expect(result.fold(id, id), isA<AccountEntity>());
   });
 
-  test('Should throw AuthException if credentials is invalid', () async {
-    when(() => accountDatasource.signInWithEmailAndPasswordParams(params))
+  test(
+      'Authenticate With Email And Password: Should throw AuthException if credentials is invalid',
+      () async {
+    when(() => accountDatasource.signInWithEmailAndPassword(params))
         .thenThrow(InvalidCredentialException());
 
-    final result = await sut.signInWithEmailAndPasswordParams(params);
+    final result = await sut.signInWithEmailAndPassword(params);
+
+    expect(result.fold(id, id), isA<AuthException>());
+  });
+
+  //Authenticate With Google Tests
+  test('Authenticate With Google: Should return an AccountEntity if success',
+      () async {
+    when(() => accountDatasource.signInWithGoogle()).thenAnswer((_) async => {
+          'id': '1',
+          'name': 'test',
+          'email': 'testando@testando.com',
+        });
+
+    final result = await sut.signInWithGoogle();
+
+    expect(result.fold(id, id), isA<AccountEntity>());
+  });
+
+  test(
+      'Authenticate With Google: Should throw AuthException if throw exception',
+      () async {
+    when(() => accountDatasource.signInWithGoogle())
+        .thenThrow(AuthException(message: 'Error ao entrar com google'));
+
+    final result = await sut.signInWithGoogle();
 
     expect(result.fold(id, id), isA<AuthException>());
   });

@@ -12,7 +12,7 @@ class AuthException implements Exception {
 }
 
 class InvalidCredentialException extends AuthException {
-  InvalidCredentialException({super.message = "invalid credential error"});
+  InvalidCredentialException({super.message = "As credenciais de acesso são inválidas"});
 
   @override
   String toString() {

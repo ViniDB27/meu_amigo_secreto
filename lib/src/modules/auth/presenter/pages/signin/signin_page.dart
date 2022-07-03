@@ -41,7 +41,8 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
+    final queryData = MediaQuery.of(context);
+    final platform = Theme.of(context).platform;
 
     return Scaffold(
       body: Container(
@@ -199,18 +200,19 @@ class _SignInPageState extends State<SignInPage> {
                         "ou",
                         style: AppFonts.textOrAuth,
                       ),
-                      const SizedBox(height: 20),
-                      SocialButton(
-                        text: "Entrar com Google",
-                        image: AppImages.google,
-                        onPress: () {},
-                      ),
                       const SizedBox(height: 10),
-                      SocialButton(
-                        text: "Entrar com Apple",
-                        image: AppImages.apple,
-                        onPress: () {},
-                      ),
+                      if (platform == TargetPlatform.android)
+                        SocialButton(
+                          text: "Entrar com Google",
+                          image: AppImages.google,
+                          onPress: () {},
+                        ),
+                      if (platform == TargetPlatform.iOS)
+                        SocialButton(
+                          text: "Entrar com Apple",
+                          image: AppImages.apple,
+                          onPress: () {},
+                        ),
                     ],
                   ),
                 ),

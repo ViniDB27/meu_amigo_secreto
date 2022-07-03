@@ -19,6 +19,6 @@ class AuthenticateWithEmailAndPasswordImpl
       return left(InvalidCredentialException());
     }
 
-    return repository.signInWithEmailAndPasswordParams(credentials);
+    return repository.signInWithEmailAndPassword(credentials);
   }
 }
