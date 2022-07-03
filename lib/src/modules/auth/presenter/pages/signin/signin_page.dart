@@ -141,7 +141,7 @@ class _SignInPageState extends State<SignInPage> {
                           }
 
                           if (state is SuccessAuthState) {
-                            return Text(state.account.name);
+                            Modular.to.pushReplacementNamed('./splash');
                           }
 
                           return const SizedBox();
