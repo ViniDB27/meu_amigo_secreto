@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/create_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,10 +16,12 @@ import '../../infra/datasources/account_datasource.dart';
 
 class AccountDatasourceFirebaseImpl extends AccountDatasource {
   final FirebaseAuth firebaseAuth;
+  final FirebaseFirestore firebaseFirestore;
   final GoogleSignIn googleSignIn;
 
   AccountDatasourceFirebaseImpl({
     required this.firebaseAuth,
+    required this.firebaseFirestore,
     required this.googleSignIn,
   });
 
@@ -27,10 +30,13 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
     try {
       final account = firebaseAuth.currentUser;
 
-      return {
-        'id': account?.uid,
-        'name': account?.displayName ?? account?.email,
-        'email': account?.email,
+      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account?.uid).get();
+      final user = users.docs.first;
+    
+       return {
+        'id': user['uid'],
+        'name': user['name'],
+        'email': user['email'],
       };
     } catch (error) {
       throw AuthException(
@@ -47,9 +53,18 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
         password: params.password,
       );
 
+      final CollectionReference users =
+          firebaseFirestore.collection('users');
+
+      await users.add({
+        'name': params.name,
+        'email': params.email,
+        'uid': account.user!.uid
+      });
+
       return {
         'id': account.user!.uid,
-        'name': account.user?.displayName ?? account.user!.email,
+        'name': params.name,
         'email': account.user!.email,
       };
     } on FirebaseAuthException catch (error) {
@@ -76,10 +91,13 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
         password: params.password,
       );
 
+      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final user = users.docs.first;
+
       return {
-        'id': account.user!.uid,
-        'name': account.user?.displayName ?? account.user!.email,
-        'email': account.user!.email,
+        'id': user['uid'],
+        'name': user['name'],
+        'email': user['email'],
       };
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
@@ -108,10 +126,13 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
 
       final account = await firebaseAuth.signInWithCredential(credential);
 
+      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final user = users.docs.first;
+
       return {
-        'id': account.user!.uid,
-        'name': account.user?.displayName ?? account.user!.email,
-        'email': account.user!.email,
+        'id': user['uid'],
+        'name': user['name'],
+        'email': user['email'],
       };
     } on FirebaseAuthException catch (error) {
       throw AuthException(
@@ -145,10 +166,13 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
 
       final account = await firebaseAuth.signInWithCredential(oauthCredential);
 
+      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final user = users.docs.first;
+
       return {
-        'id': account.user!.uid,
-        'name': account.user?.displayName ?? account.user!.email,
-        'email': account.user!.email,
+        'id': user['uid'],
+        'name': user['name'],
+        'email': user['email'],
       };
     } on FirebaseAuthException catch (error) {
       throw AuthException(

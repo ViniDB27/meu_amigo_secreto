@@ -45,6 +45,7 @@ class AuthModule extends Module {
         //datasources
         Bind.factory<AccountDatasource>((i) => AccountDatasourceFirebaseImpl(
               firebaseAuth: i(),
+              firebaseFirestore: i(),
               googleSignIn: i(),
             )),
         //repositories

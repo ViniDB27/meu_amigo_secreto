@@ -72,7 +72,7 @@ class _SplashPageState extends State<SplashPage> {
                 }
 
                 if (state is SuccessAuthState) {
-                  Modular.to.pushReplacementNamed('./signup');
+                  Modular.to.pushReplacementNamed('./signin');
                 }
 
                 return const SizedBox(height: 100);

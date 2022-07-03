@@ -1,5 +1,7 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,16 +18,26 @@ void main() {
   late CreateUserCredentials credentialsCreateUser;
 
   late FirebaseAuth firebaseAuth;
+  late FirebaseFirestore firebaseFirestore;
   late GoogleSignIn googleSignIn;
 
   late AccountDatasource sut;
 
+  late MockUser mockUser;
+
   setUp(() async {
-    firebaseAuth = MockFirebaseAuth();
+    mockUser = MockUser(
+      displayName: 'test',
+      email: 'testando@testando.com',
+    );
+
+    firebaseAuth = MockFirebaseAuth(mockUser: mockUser);
     googleSignIn = MockGoogleSignIn();
+    firebaseFirestore = FakeFirebaseFirestore();
 
     sut = AccountDatasourceFirebaseImpl(
       firebaseAuth: firebaseAuth,
+      firebaseFirestore: firebaseFirestore,
       googleSignIn: googleSignIn,
     );
 
