@@ -19,3 +19,12 @@ class InvalidCredentialException extends AuthException {
     return "InvalidCredentialException: $message";
   }
 }
+
+class InvalidEmailException extends AuthException {
+  InvalidEmailException({super.message = "Email inválido"});
+
+  @override
+  String toString() {
+    return "InvalidRecoverException: $message";
+  }
+}
