@@ -41,15 +41,15 @@ class _SignInPageState extends State<SignInPage> {
     );
 
     authenticateWithEmailAndPasswordBloc
-        .add(SignIngWithEmailAndPassword(credentials));
+        .add(SignIngWithEmailAndPasswordEvent(credentials));
   }
 
   _onSigningWithGoogle(BuildContext context) {
-    authenticateWithGoogleBloc.add(SignIngWithGoogle());
+    authenticateWithGoogleBloc.add(SignIngWithGoogleEvent());
   }
 
   _onSigningWithApple(BuildContext context) {
-    authenticateWithAppleBloc.add(SignIngWithApple());
+    authenticateWithAppleBloc.add(SignIngWithAppleEvent());
   }
 
   @override

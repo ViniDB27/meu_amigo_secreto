@@ -137,4 +137,29 @@ void main() {
 
     expect(result.fold(id, id), isA<AuthException>());
   });
+
+  //Get Current User Tests
+  test('Get Current User: Should return an AccountEntity if success',
+      () async {
+    when(() => accountDatasource.getCurrentUser()).thenAnswer((_) async => {
+          'id': '1',
+          'name': 'test',
+          'email': 'testando@testando.com',
+        });
+
+    final result = await sut.getCurrentUser();
+
+    expect(result.fold(id, id), isA<AccountEntity>());
+  });
+
+  test(
+      'Authenticate With Google: Should throw AuthException if throw exception',
+      () async {
+    when(() => accountDatasource.getCurrentUser())
+        .thenThrow(AuthException(message: 'Error ao entrar com google'));
+
+    final result = await sut.getCurrentUser();
+
+    expect(result.fold(id, id), isA<AuthException>());
+  });
 }

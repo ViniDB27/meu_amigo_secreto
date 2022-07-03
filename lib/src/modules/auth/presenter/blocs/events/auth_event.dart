@@ -9,12 +9,14 @@ class CreateUserEvent extends AuthEvent {
   CreateUserEvent(this.credentials);
 }
 
-class SignIngWithEmailAndPassword extends AuthEvent {
+class SignIngWithEmailAndPasswordEvent extends AuthEvent {
   final AuthenticateWithEmailAndPasswordCredentials credentials;
 
-  SignIngWithEmailAndPassword(this.credentials);
+  SignIngWithEmailAndPasswordEvent(this.credentials);
 }
 
-class SignIngWithGoogle extends AuthEvent {}
+class SignIngWithGoogleEvent extends AuthEvent {}
 
-class SignIngWithApple extends AuthEvent {}
+class SignIngWithAppleEvent extends AuthEvent {}
+
+class GetCurrentUserEvent extends AuthEvent {}

@@ -11,11 +11,11 @@ class AuthenticateWithAppleBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthenticateWithAppleBloc(this.authenticateWithApple)
       : super(InitialAuthState()) {
-    on<SignIngWithApple>(signIngWithApple);
+    on<SignIngWithAppleEvent>(signIngWithApple);
   }
 
   Future signIngWithApple(
-    SignIngWithApple event,
+    SignIngWithAppleEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(LoadingAuthState());

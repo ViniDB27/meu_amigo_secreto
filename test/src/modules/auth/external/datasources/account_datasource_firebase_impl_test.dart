@@ -41,6 +41,12 @@ void main() {
     );
   });
 
+  test('GetCurrentUser: Should return a Map if success', () async {
+    final result = await sut.getCurrentUser();
+
+    expect(result, isA<Map>());
+  });
+
   test('CreateUser: Should return a Map if success', () async {
     final result = await sut.createUser(credentialsCreateUser);
 

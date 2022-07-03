@@ -10,11 +10,11 @@ class AuthenticateWithEmailAndPasswordBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthenticateWithEmailAndPasswordBloc(this.authenticateWithEmailAndPassword)
       : super(InitialAuthState()) {
-    on<SignIngWithEmailAndPassword>(signIngWithEmailAndPassword);
+    on<SignIngWithEmailAndPasswordEvent>(signIngWithEmailAndPassword);
   }
 
   Future signIngWithEmailAndPassword(
-    SignIngWithEmailAndPassword event,
+    SignIngWithEmailAndPasswordEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(LoadingAuthState());

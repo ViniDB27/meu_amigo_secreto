@@ -23,8 +23,25 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   });
 
   @override
+  Future<Map> getCurrentUser() async {
+    try {
+      final account = firebaseAuth.currentUser;
+
+      return {
+        'id': account?.uid,
+        'name': account?.displayName ?? account?.email,
+        'email': account?.email,
+      };
+    } catch (error) {
+      throw AuthException(
+        message: 'não existe um usuário logado',
+      );
+    }
+  }
+
+  @override
   Future<Map> createUser(CreateUserCredentials params) async {
-     try {
+    try {
       final account = await firebaseAuth.createUserWithEmailAndPassword(
         email: params.email,
         password: params.password,

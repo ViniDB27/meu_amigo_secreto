@@ -10,11 +10,11 @@ class AuthenticateWithGoogledBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthenticateWithGoogledBloc(this.authenticateWithGoogle)
       : super(InitialAuthState()) {
-    on<SignIngWithGoogle>(signIngWithGoogle);
+    on<SignIngWithGoogleEvent>(signIngWithGoogle);
   }
 
   Future signIngWithGoogle(
-    SignIngWithGoogle event,
+    SignIngWithGoogleEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(LoadingAuthState());

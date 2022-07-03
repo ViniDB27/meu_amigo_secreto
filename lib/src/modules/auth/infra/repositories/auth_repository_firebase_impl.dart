@@ -65,4 +65,16 @@ class AuthRepositoryFirebaseImpl extends AuthRepository {
       return left(error);
     }
   }
+  
+  @override
+  Future<Either<AuthException, AccountEntity>> getCurrentUser() async {
+        try {
+      final map = await accountDatasource.getCurrentUser();
+
+      final account = AccountAdapter.fromJson(map);
+      return right(account);
+    } on AuthException catch (error) {
+      return left(error);
+    }
+  }
 }
