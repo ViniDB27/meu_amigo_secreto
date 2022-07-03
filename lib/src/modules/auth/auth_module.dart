@@ -5,12 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'domain/usecases/authenticate_with_email_and_password.dart';
 import 'domain/usecases/authenticate_with_google.dart';
 import 'domain/usecases/authenticate_with_apple.dart';
+import 'domain/usecases/create_user.dart';
 
 import 'domain/repositories/auth_repository.dart';
 
 import 'infra/usecases/authenticate_with_email_and_password_firebase.dart';
 import 'infra/usecases/authenticate_with_google_firebase.dart';
 import 'infra/usecases/authenticate_with_apple_firebase.dart';
+import 'infra/usecases/create_user_firebase.dart';
 
 import 'infra/repositories/auth_repository_firebase_impl.dart';
 
@@ -21,7 +23,9 @@ import 'external/datasources/account_datasource_firebase_impl.dart';
 import 'presenter/blocs/authenticate_with_email_and_password_bloc.dart';
 import 'presenter/blocs/authenticate_with_google_bloc.dart';
 import 'presenter/blocs/authenticate_with_apple_bloc.dart';
+import 'presenter/blocs/create_user_bloc.dart';
 
+import 'presenter/pages/signup/signup_page.dart';
 import 'presenter/pages/signin/signin_page.dart';
 import 'presenter/pages/splash/splash_page.dart';
 
@@ -45,6 +49,8 @@ class AuthModule extends Module {
             (i) => AuthenticateWithGoogleImpl(i())),
         Bind.factory<AuthenticateWithApple>(
             (i) => AuthenticateWithAppleImpl(i())),
+        Bind.factory<CreateUser>(
+            (i) => CreateUserImpl(i())),
         //blocs
         Bind.singleton<AuthenticateWithEmailAndPasswordBloc>(
             (i) => AuthenticateWithEmailAndPasswordBloc(i())),
@@ -52,11 +58,13 @@ class AuthModule extends Module {
             (i) => AuthenticateWithGoogledBloc(i())),
         Bind.singleton<AuthenticateWithAppleBloc>(
             (i) => AuthenticateWithAppleBloc(i())),
+        Bind.singleton<CreateUserBloc>((i) => CreateUserBloc(i())),
       ];
 
   @override
   List<ModularRoute> get routes => [
         ChildRoute('/', child: (context, args) => const SignInPage()),
+        ChildRoute('/signup', child: (context, args) => const SignupPage()),
         ChildRoute('/splash', child: (context, args) => const SplashPage()),
       ];
 }

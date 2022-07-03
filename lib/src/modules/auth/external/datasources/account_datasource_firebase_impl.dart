@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/create_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,8 +23,36 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   });
 
   @override
+  Future<Map> createUser(CreateUserCredentials params) async {
+     try {
+      final account = await firebaseAuth.createUserWithEmailAndPassword(
+        email: params.email,
+        password: params.password,
+      );
+
+      return {
+        'id': account.user!.uid,
+        'name': account.user?.displayName ?? account.user!.email,
+        'email': account.user!.email,
+      };
+    } on FirebaseAuthException catch (error) {
+      switch (error.code) {
+        case 'user-not-found':
+        case 'wrong-email':
+        case 'wrong-password':
+          throw InvalidCredentialException();
+        default:
+          throw AuthException(
+            message: 'Error: ${error.message}, code: ${error.code}.',
+          );
+      }
+    }
+  }
+
+  @override
   Future<Map> signInWithEmailAndPassword(
-      AuthenticateWithEmailAndPasswordCredentials params) async {
+    AuthenticateWithEmailAndPasswordCredentials params,
+  ) async {
     try {
       final account = await firebaseAuth.signInWithEmailAndPassword(
         email: params.email,

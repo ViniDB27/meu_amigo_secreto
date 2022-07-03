@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/repositories/auth_repository.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/entities/account_entity.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/create_user.dart';
 import 'package:meu_amigo_secreto/src/modules/auth/domain/errors/auth_errors.dart';
 
 import 'package:meu_amigo_secreto/src/modules/auth/infra/repositories/auth_repository_firebase_impl.dart';
@@ -16,11 +17,18 @@ void main() {
   late AccountDatasource accountDatasource;
   late AuthRepository sut;
   late AuthenticateWithEmailAndPasswordCredentials params;
+  late CreateUserCredentials credentials;
 
   setUp(() {
     accountDatasource = AccountDatasourceSpy();
     sut = AuthRepositoryFirebaseImpl(accountDatasource);
     params = AuthenticateWithEmailAndPasswordCredentials(
+      email: 'testando@testando.com',
+      password: '123456',
+    );
+    
+    credentials = CreateUserCredentials(
+      name: 'test',
       email: 'testando@testando.com',
       password: '123456',
     );
@@ -49,6 +57,33 @@ void main() {
         .thenThrow(InvalidCredentialException());
 
     final result = await sut.signInWithEmailAndPassword(params);
+
+    expect(result.fold(id, id), isA<AuthException>());
+  });
+
+  //Create User Tests
+  test(
+      'Create User: Should return an AccountEntity if success',
+      () async {
+    when(() => accountDatasource.createUser(credentials))
+        .thenAnswer((_) async => {
+              'id': '1',
+              'name': 'test',
+              'email': 'testando@testando.com',
+            });
+
+    final result = await sut.createUser(credentials);
+
+    expect(result.fold(id, id), isA<AccountEntity>());
+  });
+
+  test(
+      'Create User: Should throw AuthException if credentials is invalid',
+      () async {
+    when(() => accountDatasource.createUser(credentials))
+        .thenThrow(InvalidCredentialException());
+
+    final result = await sut.createUser(credentials);
 
     expect(result.fold(id, id), isA<AuthException>());
   });

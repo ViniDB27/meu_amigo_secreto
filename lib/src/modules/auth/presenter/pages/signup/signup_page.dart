@@ -1,61 +1,44 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter/material.dart';
 
+import '../../../../../shared/theme/app_colors.dart';
 import '../../../../../shared/theme/app_fonts.dart';
 import '../../../../../shared/theme/app_images.dart';
-import '../../../../../shared/theme/app_colors.dart';
 
-import '../../../domain/usecases/authenticate_with_email_and_password.dart';
+import '../../../domain/usecases/create_user.dart';
 
-import '../../blocs/authenticate_with_email_and_password_bloc.dart';
-import '../../blocs/authenticate_with_google_bloc.dart';
-import '../../blocs/authenticate_with_apple_bloc.dart';
+import '../../blocs/states/auth_state.dart';
+import '../../blocs/create_user_bloc.dart';
+import '../../blocs/events/auth_event.dart';
 
-import '../../../presenter/blocs/states/auth_state.dart';
-import '../../../presenter/blocs/events/auth_event.dart';
-
-import 'components/social_button.dart';
-import 'helper/auth_helper.dart';
-
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class SignupPage extends StatefulWidget {
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignupPageState extends State<SignupPage> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final authenticateWithEmailAndPasswordBloc =
-      Modular.get<AuthenticateWithEmailAndPasswordBloc>();
-  final authenticateWithGoogleBloc = Modular.get<AuthenticateWithGoogledBloc>();
-  final authenticateWithAppleBloc = Modular.get<AuthenticateWithAppleBloc>();
+  final createUserBloc = Modular.get<CreateUserBloc>();
 
-  _onSigningWithEmailAndPassword() {
-    final credentials = AuthenticateWithEmailAndPasswordCredentials(
+  _onCreateUser() {
+    final credentials = CreateUserCredentials(
+      name: nameController.text,
       email: emailController.text,
       password: passwordController.text,
     );
 
-    authenticateWithEmailAndPasswordBloc
-        .add(SignIngWithEmailAndPassword(credentials));
-  }
-
-  _onSigningWithGoogle(BuildContext context) {
-    authenticateWithGoogleBloc.add(SignIngWithGoogle());
-  }
-
-  _onSigningWithApple(BuildContext context) {
-    authenticateWithAppleBloc.add(SignIngWithApple());
+    createUserBloc.add(CreateUserEvent(credentials));
   }
 
   @override
   Widget build(BuildContext context) {
-    final queryData = MediaQuery.of(context);
-    final platform = Theme.of(context).platform;
+    MediaQueryData queryData = MediaQuery.of(context);
 
     return Scaffold(
       body: Container(
@@ -90,6 +73,26 @@ class _SignInPageState extends State<SignInPage> {
                   width: 300,
                   child: Column(
                     children: [
+                      TextField(
+                        controller: nameController,
+                        textAlign: TextAlign.center,
+                        style: AppFonts.textInput,
+                        decoration: InputDecoration(
+                          hintText: 'Nome',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.white,
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       TextField(
                         controller: emailController,
                         textAlign: TextAlign.center,
@@ -131,23 +134,9 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () =>
-                                AuthHelper.showForgotPasswordSuccessDialog(
-                                    context),
-                            child: Text(
-                              "Esqueci minha senha!",
-                              style: AppFonts.textForgotPassword,
-                            ),
-                          ),
-                        ],
-                      ),
-                      BlocBuilder<AuthenticateWithEmailAndPasswordBloc,
-                          AuthState>(
-                        bloc: authenticateWithEmailAndPasswordBloc,
+                      const SizedBox(height: 60),
+                      BlocBuilder<CreateUserBloc, AuthState>(
+                        bloc: createUserBloc,
                         builder: (context, state) {
                           if (state is ErrorAuthState) {
                             return Text(state.message);
@@ -160,9 +149,8 @@ class _SignInPageState extends State<SignInPage> {
                           return const SizedBox();
                         },
                       ),
-                      const SizedBox(height: 10),
                       InkWell(
-                        onTap: _onSigningWithEmailAndPassword,
+                        onTap: _onCreateUser,
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -175,17 +163,15 @@ class _SignInPageState extends State<SignInPage> {
                           width: double.infinity,
                           height: 56,
                           child: Center(
-                            child: BlocBuilder<
-                                AuthenticateWithEmailAndPasswordBloc,
-                                AuthState>(
-                              bloc: authenticateWithEmailAndPasswordBloc,
+                            child: BlocBuilder<CreateUserBloc, AuthState>(
+                              bloc: createUserBloc,
                               builder: (context, state) {
                                 if (state is LoadingAuthState) {
                                   return const CircularProgressIndicator();
                                 }
 
                                 return Text(
-                                  "Entrar",
+                                  "Criar conta",
                                   style: AppFonts.textInput.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -195,64 +181,23 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 60),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
                             onPressed: () {
-                              Modular.to.pushNamed('./signup');
+                              Modular.to.pop();
                             },
                             child: Text(
-                              "Criar conta",
-                              style: AppFonts.textForgotPassword,
+                              "Voltar ao login",
+                              style: AppFonts.textForgotPassword.copyWith(
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "ou",
-                        style: AppFonts.textOrAuth,
-                      ),
-                      const SizedBox(height: 10),
-                      BlocBuilder<AuthenticateWithGoogledBloc, AuthState>(
-                          bloc: authenticateWithGoogleBloc,
-                          builder: (context, state) {
-                            if (state is ErrorAuthState) {
-                              return Text(state.message);
-                            }
-
-                            if (state is SuccessAuthState) {
-                              Modular.to.pushReplacementNamed('./splash');
-                            }
-
-                            return const SizedBox();
-                          }),
-                      if (platform == TargetPlatform.android)
-                        SocialButton(
-                          onPress: () => _onSigningWithGoogle(context),
-                          text: "Entrar com Google",
-                          image: AppImages.google,
-                        ),
-                      BlocBuilder<AuthenticateWithAppleBloc, AuthState>(
-                          bloc: authenticateWithAppleBloc,
-                          builder: (context, state) {
-                            if (state is ErrorAuthState) {
-                              return Text(state.message);
-                            }
-
-                            if (state is SuccessAuthState) {
-                              Modular.to.pushReplacementNamed('./splash');
-                            }
-
-                            return const SizedBox();
-                          }),
-                      if (platform == TargetPlatform.iOS)
-                        SocialButton(
-                          text: "Entrar com Apple",
-                          image: AppImages.apple,
-                          onPress: () => _onSigningWithApple(context),
-                        ),
                     ],
                   ),
                 ),

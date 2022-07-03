@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_with_email_and_password.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/create_user.dart';
 
 import 'package:meu_amigo_secreto/src/modules/auth/infra/datasources/account_datasource.dart';
 
@@ -12,6 +13,7 @@ import 'package:meu_amigo_secreto/src/modules/auth/external/datasources/account_
 
 void main() {
   late AuthenticateWithEmailAndPasswordCredentials credentials;
+  late CreateUserCredentials credentialsCreateUser;
 
   late FirebaseAuth firebaseAuth;
   late GoogleSignIn googleSignIn;
@@ -31,6 +33,18 @@ void main() {
       email: 'testando@testando.com',
       password: '123456',
     );
+
+    credentialsCreateUser = CreateUserCredentials(
+      name: 'test',
+      email: 'testando@testando.com',
+      password: '123456',
+    );
+  });
+
+  test('CreateUser: Should return a Map if success', () async {
+    final result = await sut.createUser(credentialsCreateUser);
+
+    expect(result, isA<Map>());
   });
 
   test('SignInWithEmailAndPassword: Should return a Map if success', () async {
