@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../domain/errors/auth_errors.dart';
@@ -13,7 +14,7 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   AccountDatasourceFirebaseImpl({
     required this.firebaseAuth,
     required this.googleSignIn,
- } );
+  });
 
   @override
   Future<Map> signInWithEmailAndPassword(
@@ -62,6 +63,10 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
         'email': account.user!.email,
       };
     } on FirebaseAuthException catch (error) {
+      throw AuthException(
+        message: 'Error: ${error.message}, code: ${error.code}.',
+      );
+    } on PlatformException catch (error) {
       throw AuthException(
         message: 'Error: ${error.message}, code: ${error.code}.',
       );

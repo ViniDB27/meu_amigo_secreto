@@ -7,6 +7,8 @@ import '../../../../../shared/theme/app_images.dart';
 import '../../../../../shared/theme/app_colors.dart';
 
 import '../../../domain/usecases/authenticate_with_email_and_password.dart';
+
+import '../../../presenter/blocs/authenticate_with_google_bloc.dart';
 import '../../../presenter/blocs/states/auth_state.dart';
 import '../../../presenter/blocs/events/auth_event.dart';
 
@@ -28,6 +30,7 @@ class _SignInPageState extends State<SignInPage> {
 
   final authenticateWithEmailAndPasswordBloc =
       Modular.get<AuthenticateWithEmailAndPasswordBloc>();
+  final authenticateWithGoogleBloc = Modular.get<AuthenticateWithGoogledBloc>();
 
   _onSigningWithEmailAndPassword(BuildContext context) {
     final credentials = AuthenticateWithEmailAndPasswordCredentials(
@@ -37,6 +40,10 @@ class _SignInPageState extends State<SignInPage> {
 
     authenticateWithEmailAndPasswordBloc
         .add(SignIngWithEmailAndPassword(credentials));
+  }
+
+  _onSigningWithGoogle(BuildContext context) {
+    authenticateWithGoogleBloc.add(SignIngWithGoogle());
   }
 
   @override
@@ -137,7 +144,6 @@ class _SignInPageState extends State<SignInPage> {
                         bloc: authenticateWithEmailAndPasswordBloc,
                         builder: (context, state) {
                           if (state is ErrorAuthState) {
-                            print(state.message);
                             return Text(state.message);
                           }
 
@@ -201,11 +207,24 @@ class _SignInPageState extends State<SignInPage> {
                         style: AppFonts.textOrAuth,
                       ),
                       const SizedBox(height: 10),
+                      BlocBuilder<AuthenticateWithGoogledBloc, AuthState>(
+                          bloc: authenticateWithGoogleBloc,
+                          builder: (context, state) {
+                            if (state is ErrorAuthState) {
+                              return Text(state.message);
+                            }
+
+                            if (state is SuccessAuthState) {
+                              Modular.to.pushReplacementNamed('./splash');
+                            }
+
+                            return const SizedBox();
+                          }),
                       if (platform == TargetPlatform.android)
                         SocialButton(
+                          onPress: () => _onSigningWithGoogle(context),
                           text: "Entrar com Google",
                           image: AppImages.google,
-                          onPress: () {},
                         ),
                       if (platform == TargetPlatform.iOS)
                         SocialButton(

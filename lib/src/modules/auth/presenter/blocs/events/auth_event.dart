@@ -7,3 +7,5 @@ class SignIngWithEmailAndPassword extends AuthEvent {
 
   SignIngWithEmailAndPassword(this.credentials);
 }
+
+class SignIngWithGoogle extends AuthEvent {}

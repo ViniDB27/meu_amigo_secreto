@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         LocalJsonLocalization.delegate,
       ],
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.cyan,
       ),
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
