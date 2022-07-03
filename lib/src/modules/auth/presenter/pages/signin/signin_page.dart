@@ -9,6 +9,7 @@ import '../../../../../shared/theme/app_colors.dart';
 import '../../../domain/usecases/authenticate_with_email_and_password.dart';
 
 import '../../../presenter/blocs/authenticate_with_google_bloc.dart';
+import '../../../presenter/blocs/authenticate_with_apple_bloc.dart';
 import '../../../presenter/blocs/states/auth_state.dart';
 import '../../../presenter/blocs/events/auth_event.dart';
 
@@ -31,6 +32,7 @@ class _SignInPageState extends State<SignInPage> {
   final authenticateWithEmailAndPasswordBloc =
       Modular.get<AuthenticateWithEmailAndPasswordBloc>();
   final authenticateWithGoogleBloc = Modular.get<AuthenticateWithGoogledBloc>();
+  final authenticateWithAppleBloc = Modular.get<AuthenticateWithAppleBloc>();
 
   _onSigningWithEmailAndPassword(BuildContext context) {
     final credentials = AuthenticateWithEmailAndPasswordCredentials(
@@ -44,6 +46,10 @@ class _SignInPageState extends State<SignInPage> {
 
   _onSigningWithGoogle(BuildContext context) {
     authenticateWithGoogleBloc.add(SignIngWithGoogle());
+  }
+
+  _onSigningWithApple(BuildContext context) {
+    authenticateWithAppleBloc.add(SignIngWithApple());
   }
 
   @override
@@ -226,11 +232,24 @@ class _SignInPageState extends State<SignInPage> {
                           text: "Entrar com Google",
                           image: AppImages.google,
                         ),
+                      BlocBuilder<AuthenticateWithAppleBloc, AuthState>(
+                          bloc: authenticateWithAppleBloc,
+                          builder: (context, state) {
+                            if (state is ErrorAuthState) {
+                              return Text(state.message);
+                            }
+
+                            if (state is SuccessAuthState) {
+                              Modular.to.pushReplacementNamed('./splash');
+                            }
+
+                            return const SizedBox();
+                          }),
                       if (platform == TargetPlatform.iOS)
                         SocialButton(
                           text: "Entrar com Apple",
                           image: AppImages.apple,
-                          onPress: () {},
+                          onPress: () => _onSigningWithApple(context),
                         ),
                     ],
                   ),

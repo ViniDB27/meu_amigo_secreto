@@ -3,4 +3,5 @@ import 'package:meu_amigo_secreto/src/modules/auth/domain/usecases/authenticate_
 abstract class AccountDatasource {
   Future<Map> signInWithEmailAndPassword(AuthenticateWithEmailAndPasswordCredentials params);
   Future<Map> signInWithGoogle();
+  Future<Map> signInWithApple();
 }

@@ -9,3 +9,5 @@ class SignIngWithEmailAndPassword extends AuthEvent {
 }
 
 class SignIngWithGoogle extends AuthEvent {}
+
+class SignIngWithApple extends AuthEvent {}

@@ -77,4 +77,29 @@ void main() {
 
     expect(result.fold(id, id), isA<AuthException>());
   });
+
+  //Authenticate With Apple Tests
+  test('Authenticate With Google: Should return an AccountEntity if success',
+      () async {
+    when(() => accountDatasource.signInWithApple()).thenAnswer((_) async => {
+          'id': '1',
+          'name': 'test',
+          'email': 'testando@testando.com',
+        });
+
+    final result = await sut.signInWithApple();
+
+    expect(result.fold(id, id), isA<AccountEntity>());
+  });
+
+  test(
+      'Authenticate With Google: Should throw AuthException if throw exception',
+      () async {
+    when(() => accountDatasource.signInWithApple())
+        .thenThrow(AuthException(message: 'Error ao entrar com google'));
+
+    final result = await sut.signInWithApple();
+
+    expect(result.fold(id, id), isA<AuthException>());
+  });
 }

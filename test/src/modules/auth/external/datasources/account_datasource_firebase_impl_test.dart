@@ -44,4 +44,10 @@ void main() {
 
     expect(result, isA<Map>());
   });
+
+  // test('SignInWithApple: Should return a Map if success', () async {
+  //   final result = await sut.signInWithApple();
+
+  //   expect(result, isA<Map>());
+  // });
 }

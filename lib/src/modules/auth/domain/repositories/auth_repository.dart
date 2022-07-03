@@ -7,4 +7,5 @@ import '../errors/auth_errors.dart';
 abstract class AuthRepository {
   Future<Either<AuthException, AccountEntity>> signInWithEmailAndPassword(AuthenticateWithEmailAndPasswordCredentials credentials);
   Future<Either<AuthException, AccountEntity>> signInWithGoogle();
+  Future<Either<AuthException, AccountEntity>> signInWithApple();
 }

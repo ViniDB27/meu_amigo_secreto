@@ -36,4 +36,16 @@ class AuthRepositoryFirebaseImpl extends AuthRepository {
       return left(error);
     }
   }
+  
+  @override
+  Future<Either<AuthException, AccountEntity>> signInWithApple() async {
+     try {
+      final map = await accountDatasource.signInWithApple();
+
+      final account = AccountAdapter.fromJson(map);
+      return right(account);
+    } on AuthException catch (error) {
+      return left(error);
+    }
+  }
 }
