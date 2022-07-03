@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'src/modules/group/group_module.dart';
 import 'src/modules/auth/auth_module.dart';
 
 class MainModule extends Module {
@@ -10,5 +11,6 @@ class MainModule extends Module {
 
   List<ModularRoute> get routes => [
     ModuleRoute('/', module: AuthModule()),
+    ModuleRoute('/group', module: GroupModule()),
   ];
 }
