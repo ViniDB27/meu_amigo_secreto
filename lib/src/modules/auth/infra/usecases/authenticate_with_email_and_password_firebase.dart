@@ -6,11 +6,11 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/account_entity.dart';
 import '../../domain/errors/auth_errors.dart';
 
-class AuthenticateWithEmailAndPasswordOnFirebase
+class AuthenticateWithEmailAndPasswordImpl
     extends AuthenticateWithEmailAndPassword {
   final AuthRepository repository;
 
-  AuthenticateWithEmailAndPasswordOnFirebase(this.repository);
+  AuthenticateWithEmailAndPasswordImpl(this.repository);
 
   @override
   Future<Either<AuthException, AccountEntity>> call(

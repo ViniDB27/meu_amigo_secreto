@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/app_fonts.dart';
 import '../../../../../shared/theme/app_images.dart';
 import '../../../../../shared/theme/app_colors.dart';
 
-import './components/social_button.dart';
-import './helper/auth_helper.dart';
+import '../../../domain/usecases/authenticate_with_email_and_password.dart';
+import '../../../presenter/blocs/states/auth_state.dart';
+import '../../../presenter/blocs/events/auth_event.dart';
+
+import '../../blocs/authenticate_with_email_and_password_bloc.dart';
+
+import 'components/social_button.dart';
+import 'helper/auth_helper.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -17,6 +25,19 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  final authenticateWithEmailAndPasswordBloc =
+      Modular.get<AuthenticateWithEmailAndPasswordBloc>();
+
+  _onSigningWithEmailAndPassword(BuildContext context) {
+    final credentials = AuthenticateWithEmailAndPasswordCredentials(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    authenticateWithEmailAndPasswordBloc
+        .add(SignIngWithEmailAndPassword(credentials));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +121,9 @@ class _SignInPageState extends State<SignInPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: () => AuthHelper.showForgotPasswordSuccessDialog(context),
+                            onPressed: () =>
+                                AuthHelper.showForgotPasswordSuccessDialog(
+                                    context),
                             child: Text(
                               "Esqueci minha senha!",
                               style: AppFonts.textForgotPassword,
@@ -108,9 +131,25 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ],
                       ),
+                      BlocBuilder<AuthenticateWithEmailAndPasswordBloc,
+                          AuthState>(
+                        bloc: authenticateWithEmailAndPasswordBloc,
+                        builder: (context, state) {
+                          if (state is ErrorAuthState) {
+                            print(state.message);
+                            return Text(state.message);
+                          }
+
+                          if (state is SuccessAuthState) {
+                            return Text(state.account.name);
+                          }
+
+                          return const SizedBox();
+                        },
+                      ),
                       const SizedBox(height: 10),
                       InkWell(
-                        onTap: () {},
+                        onTap: () => _onSigningWithEmailAndPassword(context),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -123,11 +162,22 @@ class _SignInPageState extends State<SignInPage> {
                           width: double.infinity,
                           height: 56,
                           child: Center(
-                            child: Text(
-                              "Entrar",
-                              style: AppFonts.textInput.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: BlocBuilder<
+                                AuthenticateWithEmailAndPasswordBloc,
+                                AuthState>(
+                              bloc: authenticateWithEmailAndPasswordBloc,
+                              builder: (context, state) {
+                                if (state is LoadingAuthState) {
+                                  return const CircularProgressIndicator();
+                                }
+
+                                return Text(
+                                  "Entrar",
+                                  style: AppFonts.textInput.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),

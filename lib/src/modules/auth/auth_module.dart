@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meu_amigo_secreto/src/modules/auth/presenter/blocs/authenticate_with_email_and_password_bloc.dart';
 
 import 'domain/usecases/authenticate_with_email_and_password.dart';
 import 'domain/repositories/auth_repository.dart';
@@ -16,13 +17,15 @@ class AuthModule extends Module {
   @override
   List<Bind> get binds => [
         //utils
-        Bind.singleton<FirebaseAuth>((i) => FirebaseAuth.instance),
+        Bind.instance<FirebaseAuth>(FirebaseAuth.instance),
         //datasources
         Bind.factory<AccountDatasource>((i) => AccountDatasourceFirebaseImpl(i())),
         //repositories
         Bind.factory<AuthRepository>((i) => AuthRepositoryFirebaseImpl(i())),
         //usecases
-        Bind.factory<AuthenticateWithEmailAndPassword>((i) => AuthenticateWithEmailAndPasswordOnFirebase(i())),
+        Bind.factory<AuthenticateWithEmailAndPassword>((i) => AuthenticateWithEmailAndPasswordImpl(i())),
+        //blocs
+        Bind.singleton<AuthenticateWithEmailAndPasswordBloc>((i) => AuthenticateWithEmailAndPasswordBloc(i()))
       ];
 
   @override

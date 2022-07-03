@@ -26,12 +26,12 @@ void main() {
 
   setUp(() {
     repository = AuthRepositorySpy();
-    sut = AuthenticateWithEmailAndPasswordOnFirebase(repository);
+    sut = AuthenticateWithEmailAndPasswordImpl(repository);
   });
 
   test('Should return an AccountEntity if success', () async {
     final repository = AuthRepositorySpy();
-    final sut = AuthenticateWithEmailAndPasswordOnFirebase(repository);
+    final sut = AuthenticateWithEmailAndPasswordImpl(repository);
     final credentials = AuthenticateWithEmailAndPasswordCredentials(
       email: 'testando@testando.com',
       password: '123456',
