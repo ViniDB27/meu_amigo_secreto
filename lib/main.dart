@@ -1,6 +1,8 @@
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:localization/localization.dart';
 import 'package:flutter/material.dart';
 
 import './src/shared/firebase/firebase_options.dart';
@@ -26,8 +28,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    LocalJsonLocalization.delegate.directories = ['lib/src/shared/i18n'];
     return MaterialApp.router(
       title: 'Meu Amigo Secreto',
+      supportedLocales: const [
+        Locale('pt', 'BR'),
+      ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        LocalJsonLocalization.delegate,
+      ],
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
