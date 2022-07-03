@@ -11,7 +11,8 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   AccountDatasourceFirebaseImpl(this.firebaseAuth);
 
   @override
-  Future<Map> signInWithEmailAndPasswordParams(AuthenticateWithEmailAndPasswordCredentials params) async {
+  Future<Map> signInWithEmailAndPasswordParams(
+      AuthenticateWithEmailAndPasswordCredentials params) async {
     try {
       final account = await firebaseAuth.signInWithEmailAndPassword(
         email: params.email,
@@ -20,13 +21,20 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
 
       return {
         'id': account.user!.uid,
-        'name': account.user!.displayName,
+        'name': account.user?.displayName ?? account.user!.email,
         'email': account.user!.email,
       };
     } on FirebaseAuthException catch (error) {
-      throw AuthException(
-        message: 'Error: ${error.message}, code: ${error.code}.',
-      );
+      switch (error.code) {
+        case 'user-not-found':
+        case 'wrong-email':
+        case 'wrong-password':
+          throw InvalidCredentialException();
+        default:
+          throw AuthException(
+            message: 'Error: ${error.message}, code: ${error.code}.',
+          );
+      }
     }
   }
 }
