@@ -26,14 +26,28 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
   });
 
   @override
+  Future<void> recoverPassword(String email) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (error) {
+      throw AuthException(
+        message: error.toString(),
+      );
+    }
+  }
+
+  @override
   Future<Map> getCurrentUser() async {
     try {
       final account = firebaseAuth.currentUser;
 
-      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account?.uid).get();
+      final users = await firebaseFirestore
+          .collection('users')
+          .where('uid', isEqualTo: account?.uid)
+          .get();
       final user = users.docs.first;
-    
-       return {
+
+      return {
         'id': user['uid'],
         'name': user['name'],
         'email': user['email'],
@@ -53,8 +67,7 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
         password: params.password,
       );
 
-      final CollectionReference users =
-          firebaseFirestore.collection('users');
+      final CollectionReference users = firebaseFirestore.collection('users');
 
       await users.add({
         'name': params.name,
@@ -91,7 +104,10 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
         password: params.password,
       );
 
-      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final users = await firebaseFirestore
+          .collection('users')
+          .where('uid', isEqualTo: account.user?.uid)
+          .get();
       final user = users.docs.first;
 
       return {
@@ -126,7 +142,10 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
 
       final account = await firebaseAuth.signInWithCredential(credential);
 
-      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final users = await firebaseFirestore
+          .collection('users')
+          .where('uid', isEqualTo: account.user?.uid)
+          .get();
       final user = users.docs.first;
 
       return {
@@ -166,7 +185,10 @@ class AccountDatasourceFirebaseImpl extends AccountDatasource {
 
       final account = await firebaseAuth.signInWithCredential(oauthCredential);
 
-      final users = await firebaseFirestore.collection('users').where('uid', isEqualTo: account.user?.uid).get();
+      final users = await firebaseFirestore
+          .collection('users')
+          .where('uid', isEqualTo: account.user?.uid)
+          .get();
       final user = users.docs.first;
 
       return {

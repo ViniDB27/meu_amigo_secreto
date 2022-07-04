@@ -135,9 +135,9 @@ class _SignInPageState extends State<SignInPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: () =>
-                                AuthHelper.showForgotPasswordSuccessDialog(
-                                    context),
+                            onPressed: () {
+                              Modular.to.pushNamed('./recover');
+                            },
                             child: Text(
                               "Esqueci minha senha!",
                               style: AppFonts.textForgotPassword,

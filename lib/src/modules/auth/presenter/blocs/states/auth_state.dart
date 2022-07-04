@@ -4,6 +4,7 @@ abstract class AuthState {}
 
 class InitialAuthState extends AuthState {}
 
+class SuccessEmptyAuthState extends AuthState {}
 class SuccessAuthState extends AuthState {
   final AccountEntity account;
 

@@ -20,3 +20,9 @@ class SignIngWithGoogleEvent extends AuthEvent {}
 class SignIngWithAppleEvent extends AuthEvent {}
 
 class GetCurrentUserEvent extends AuthEvent {}
+
+class RecoverPasswordEvent extends AuthEvent {
+  final String email;
+
+  RecoverPasswordEvent(this.email);
+}
