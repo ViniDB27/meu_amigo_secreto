@@ -168,9 +168,9 @@ class FirebaseService {
         final members = group['members'] as List;
 
         final member =
-            members.firstWhere((member) => member['email'] == user?['email']);
+            members.where((member) => member['email'] == user?['email']);
 
-        return member != null;
+        return member.isNotEmpty;
       }).toList();
 
       return groups.map((e) {

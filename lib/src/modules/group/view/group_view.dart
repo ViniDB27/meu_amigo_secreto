@@ -209,7 +209,10 @@ class _GroupViewState extends State<GroupView> {
                     const SizedBox(height: 40),
                     GroupInformation(groupModel: groupModel),
                     const SizedBox(height: 40),
-                    if (isOwner && groupModel != null && !groupModel!.isDraw)
+                    if (isOwner &&
+                        groupModel != null &&
+                        !groupModel!.isDraw &&
+                        groupModel!.members.length > 1)
                       DrawButton(
                         isLoading: isDrawLoading,
                         onPressed: sortedFriends,
