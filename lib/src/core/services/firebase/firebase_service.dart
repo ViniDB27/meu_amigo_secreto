@@ -2,17 +2,56 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'firebase_service_exception.dart';
 
 class FirebaseService {
   final FirebaseAuth firebaseAuth;
   final FirebaseFirestore firebaseFirestore;
+  final GoogleSignIn googleSignIn;
 
   FirebaseService({
     required this.firebaseAuth,
     required this.firebaseFirestore,
+    required this.googleSignIn,
   });
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      final firebaseAccount =
+          await firebaseAuth.signInWithCredential(credential);
+
+      final CollectionReference userCollection =
+          firebaseFirestore.collection('users');
+
+      final users = await userCollection
+          .where('uid', isEqualTo: firebaseAccount.user?.uid)
+          .get();
+
+      if (users.docs.isEmpty) {
+        await userCollection.add({
+          'name': firebaseAccount.user!.displayName,
+          'email': firebaseAccount.user!.email,
+          'uid': firebaseAccount.user!.uid,
+          'avatar': firebaseAccount.user!.photoURL,
+          'phone': firebaseAccount.user!.phoneNumber,
+        });
+      }
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
 
   Future<void> createNewAccount({
     required String name,

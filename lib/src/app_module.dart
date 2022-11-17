@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'core/services/firebase/firebase_service.dart';
 import 'core/shared/routes/app_routes.dart';
@@ -18,12 +19,14 @@ class AppModule extends Module {
         //instance
         Bind.instance<FirebaseAuth>(FirebaseAuth.instance),
         Bind.instance<FirebaseFirestore>(FirebaseFirestore.instance),
+        Bind.instance<GoogleSignIn>(GoogleSignIn()),
 
         //services
         Bind.factory<FirebaseService>(
           (i) => FirebaseService(
             firebaseAuth: i(),
             firebaseFirestore: i(),
+            googleSignIn: i(),
           ),
         ),
       ];

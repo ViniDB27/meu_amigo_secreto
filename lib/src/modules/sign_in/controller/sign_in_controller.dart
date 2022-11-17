@@ -35,4 +35,12 @@ class SignInController {
     }
     return null;
   }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      await repository.signInWithGoogle();
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
 }

@@ -19,4 +19,12 @@ class SignInRepository {
       rethrow;
     }
   }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      await firebaseService.signInWithGoogle();
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
 }

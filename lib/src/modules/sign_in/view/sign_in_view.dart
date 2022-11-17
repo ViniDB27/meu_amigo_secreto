@@ -27,7 +27,7 @@ class _SignInViewState extends State<SignInView> {
 
   bool isLoading = false;
 
-  void onSignUpButtonPressed() async {
+  void onSignInButtonPressed() async {
     setState(() => isLoading = true);
 
     try {
@@ -47,6 +47,20 @@ class _SignInViewState extends State<SignInView> {
       );
     } finally {
       setState(() => isLoading = false);
+    }
+  }
+
+  void onSignInWithGoogleButtonPressed() async {
+    try {
+      await controller.signInWithGoogle();
+
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
     }
   }
 
@@ -108,7 +122,7 @@ class _SignInViewState extends State<SignInView> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: onSignUpButtonPressed,
+                      onPressed: onSignInButtonPressed,
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primaryContainer,
@@ -177,7 +191,7 @@ class _SignInViewState extends State<SignInView> {
                       SocialButton(
                         color: const Color(0xFFEA4335),
                         icon: FontAwesomeIcons.google,
-                        onTap: () {},
+                        onTap: onSignInWithGoogleButtonPressed,
                       ),
                     SocialButton(
                       color: const Color(0xFF1977F3),
