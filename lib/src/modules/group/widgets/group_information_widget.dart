@@ -59,26 +59,22 @@ class GroupInformation extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Bairro: ${groupModel?.neighborhood}",
-              style: GoogleFonts.inter().copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-            ),
-            Text(
-              "Cidade: ${groupModel?.city}",
-              style: GoogleFonts.inter().copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-            ),
-          ],
+        Text(
+          "Bairro: ${groupModel?.neighborhood}",
+          style: GoogleFonts.inter().copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.normal,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          "Cidade: ${groupModel?.city}",
+          style: GoogleFonts.inter().copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.normal,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
         ),
         const SizedBox(height: 20),
         Row(

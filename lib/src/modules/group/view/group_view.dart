@@ -224,7 +224,7 @@ class _GroupViewState extends State<GroupView> {
                       removeField: removeField,
                       onEditingComplete: saveMySuggestions,
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                     if (friend != null) const YourFriend(),
                     const SizedBox(height: 20),
                     if (friend != null)
