@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "198456589523",
-    "project_id": "meu-amigo-secreto-c8701",
-    "storage_bucket": "meu-amigo-secreto-c8701.appspot.com"
+    "project_number": "315865547000",
+    "project_id": "meu-amigo-secreto-5747d",
+    "storage_bucket": "meu-amigo-secreto-5747d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:198456589523:android:a6a3beac77d2e362e06826",
+        "mobilesdk_app_id": "1:315865547000:android:6ccc0d97e8948ab4187b0d",
         "android_client_info": {
-          "package_name": "com.example.meu_amigo_secreto"
+          "package_name": "br.com.viniciosdb.meu_amigo_secreto"
         }
       },
       "oauth_client": [
         {
-          "client_id": "198456589523-b6r7pacnuur85bolhcqla0kuhi9imtsv.apps.googleusercontent.com",
+          "client_id": "315865547000-0c390ndde15gi1s5ifg28pblprp57s40.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyALgjqqXNEcs8jiJv9U6aZaowHB5JIy86I"
+          "current_key": "AIzaSyDzxbn3T6TBMhikLOcc4b1S2OpIMf-p9jE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "198456589523-b6r7pacnuur85bolhcqla0kuhi9imtsv.apps.googleusercontent.com",
+              "client_id": "315865547000-0c390ndde15gi1s5ifg28pblprp57s40.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

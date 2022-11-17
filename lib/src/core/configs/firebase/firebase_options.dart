@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,41 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD3-fLBVCgrlz0B-SlIAeR-Mpoi54MktcE',
-    appId: '1:198456589523:web:a92d6d5adcc89362e06826',
-    messagingSenderId: '198456589523',
-    projectId: 'meu-amigo-secreto-c8701',
-    authDomain: 'meu-amigo-secreto-c8701.firebaseapp.com',
-    storageBucket: 'meu-amigo-secreto-c8701.appspot.com',
-    measurementId: 'G-TENCED72ZD',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyALgjqqXNEcs8jiJv9U6aZaowHB5JIy86I',
-    appId: '1:198456589523:android:a6a3beac77d2e362e06826',
-    messagingSenderId: '198456589523',
-    projectId: 'meu-amigo-secreto-c8701',
-    storageBucket: 'meu-amigo-secreto-c8701.appspot.com',
+    apiKey: 'AIzaSyDzxbn3T6TBMhikLOcc4b1S2OpIMf-p9jE',
+    appId: '1:315865547000:android:6ccc0d97e8948ab4187b0d',
+    messagingSenderId: '315865547000',
+    projectId: 'meu-amigo-secreto-5747d',
+    storageBucket: 'meu-amigo-secreto-5747d.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAengwPmKWWgDf_XkhkdvnKXU5In6rCyZE',
-    appId: '1:198456589523:ios:279d087a5957856ee06826',
-    messagingSenderId: '198456589523',
-    projectId: 'meu-amigo-secreto-c8701',
-    storageBucket: 'meu-amigo-secreto-c8701.appspot.com',
-    iosClientId: '198456589523-ba5773nee3fc87ka164nuotp2entdlal.apps.googleusercontent.com',
-    iosBundleId: 'com.example.meuAmigoSecreto',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAengwPmKWWgDf_XkhkdvnKXU5In6rCyZE',
-    appId: '1:198456589523:ios:279d087a5957856ee06826',
-    messagingSenderId: '198456589523',
-    projectId: 'meu-amigo-secreto-c8701',
-    storageBucket: 'meu-amigo-secreto-c8701.appspot.com',
-    iosClientId: '198456589523-ba5773nee3fc87ka164nuotp2entdlal.apps.googleusercontent.com',
-    iosBundleId: 'com.example.meuAmigoSecreto',
+    apiKey: 'AIzaSyAHJ11YLiTGhUrAzuvIYRixRQy7a_UYjqs',
+    appId: '1:315865547000:ios:300275d233e7fac6187b0d',
+    messagingSenderId: '315865547000',
+    projectId: 'meu-amigo-secreto-5747d',
+    storageBucket: 'meu-amigo-secreto-5747d.appspot.com',
+    iosClientId: '315865547000-r7p7pve9vaaa8prvfopaa9lujtuufqip.apps.googleusercontent.com',
+    iosBundleId: 'br.com.viniciosdb.meuAmigoSecreto',
   );
 }

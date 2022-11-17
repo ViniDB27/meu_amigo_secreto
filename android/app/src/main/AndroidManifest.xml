@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.meu_amigo_secreto">
+    package="br.com.viniciosdb.meu_amigo_secreto">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="meu_amigo_secreto"
