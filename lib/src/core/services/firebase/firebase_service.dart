@@ -333,4 +333,40 @@ class FirebaseService {
       throw FirebaseServiceException(error.code);
     }
   }
+
+  Future<void> editGroup({
+    required String id,
+    required String name,
+    required String drawDate,
+    required String value,
+    required String eventDate,
+    required String eventTime,
+    required String address,
+    required String neighborhood,
+    required String number,
+    required String city,
+    required String zipCode,
+    String? image,
+  }) async {
+    try {
+
+      final groups = await firebaseFirestore.collection('groups').doc(id).get();
+
+      await groups.reference.update({
+        'image': image,
+        'name': name,
+        'drawDate': drawDate,
+        'value': value,
+        'eventDate': eventDate,
+        'eventTime': eventTime,
+        'address': address,
+        'neighborhood': neighborhood,
+        'number': number,
+        'city': city,
+        'zipCode': zipCode,
+      });
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
 }

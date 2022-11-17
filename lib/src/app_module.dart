@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'core/services/firebase/firebase_service.dart';
 import 'core/shared/routes/app_routes.dart';
 import 'modules/create_group/create_group_module.dart';
+import 'modules/edit_group/edit_group_module.dart';
 import 'modules/forgot_password/forgot_password_module.dart';
 import 'modules/group/group_module.dart';
 import 'modules/home/home_module.dart';
@@ -39,6 +40,7 @@ class AppModule extends Module {
         ModuleRoute(AppRoutes.forgotPassword, module: ForgotPasswordModule()),
         ModuleRoute(AppRoutes.home, module: HomeModule()),
         ModuleRoute(AppRoutes.createGroup, module: CreateGroupModule()),
+        ModuleRoute(AppRoutes.editGroup, module: EditGroupModule()),
         ModuleRoute(AppRoutes.group, module: GroupModule()),
       ];
 }

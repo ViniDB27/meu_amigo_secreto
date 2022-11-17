@@ -160,7 +160,7 @@ class _GroupViewState extends State<GroupView> {
     }
   }
 
-  void loadAllData() {
+  Future<void> loadAllData() async {
     loadGroupData();
     verifyOwner();
     loadFriend();
@@ -182,11 +182,8 @@ class _GroupViewState extends State<GroupView> {
         title: const Text('Meu amigo secreto'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
-          if (isOwner)
-            ShareButton(
-              groupId: groupModel?.id,
-            ),
-          if (isOwner) const EditButton(),
+          if (isOwner) ShareButton(groupId: widget.groupId),
+          if (isOwner) EditButton(id: widget.groupId),
         ],
       ),
       body: isLoading
@@ -201,41 +198,44 @@ class _GroupViewState extends State<GroupView> {
               ),
               width: mediaQuery.size.width,
               height: mediaQuery.size.height,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    GroupHeader(groupModel: groupModel),
-                    const SizedBox(height: 40),
-                    GroupInformation(groupModel: groupModel),
-                    const SizedBox(height: 40),
-                    if (isOwner &&
-                        groupModel != null &&
-                        !groupModel!.isDraw &&
-                        groupModel!.members.length > 1)
-                      DrawButton(
-                        isLoading: isDrawLoading,
-                        onPressed: sortedFriends,
+              child: RefreshIndicator(
+                onRefresh: loadAllData,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      GroupHeader(groupModel: groupModel),
+                      const SizedBox(height: 40),
+                      GroupInformation(groupModel: groupModel),
+                      const SizedBox(height: 40),
+                      if (isOwner &&
+                          groupModel != null &&
+                          !groupModel!.isDraw &&
+                          groupModel!.members.length > 1)
+                        DrawButton(
+                          isLoading: isDrawLoading,
+                          onPressed: sortedFriends,
+                        ),
+                      const SizedBox(height: 40),
+                      Suggestion(
+                        suggestionFieldList: suggestionFieldList,
+                        addNewField: addNewField,
+                        removeField: removeField,
+                        onEditingComplete: saveMySuggestions,
                       ),
-                    const SizedBox(height: 40),
-                    Suggestion(
-                      suggestionFieldList: suggestionFieldList,
-                      addNewField: addNewField,
-                      removeField: removeField,
-                      onEditingComplete: saveMySuggestions,
-                    ),
-                    const SizedBox(height: 20),
-                    if (friend != null) const YourFriend(),
-                    const SizedBox(height: 20),
-                    if (friend != null)
-                      FriendCard(
-                        friend: friend!,
-                        suggestion: friendSuggestions,
-                      ),
-                    const SizedBox(height: 40),
-                    AllMembers(members: groupModel?.members ?? []),
-                    const SizedBox(height: 60),
-                  ],
+                      const SizedBox(height: 20),
+                      if (friend != null) const YourFriend(),
+                      const SizedBox(height: 20),
+                      if (friend != null)
+                        FriendCard(
+                          friend: friend!,
+                          suggestion: friendSuggestions,
+                        ),
+                      const SizedBox(height: 40),
+                      AllMembers(members: groupModel?.members ?? []),
+                      const SizedBox(height: 60),
+                    ],
+                  ),
                 ),
               ),
             ),

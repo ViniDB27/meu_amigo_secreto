@@ -15,11 +15,7 @@ class GroupModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute(
-          '/',
-          child: (context, args) => GroupView(
-            groupId: args.data.toString(),
-          ),
-        ),
+        ChildRoute('/',
+            child: (context, args) => GroupView(groupId: args.data.toString())),
       ];
 }
