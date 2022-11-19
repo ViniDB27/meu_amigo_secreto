@@ -27,4 +27,20 @@ class SignInRepository {
       rethrow;
     }
   }
+
+  Future<void> signInWithApple() async {
+    try {
+      await firebaseService.signInWithApple();
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithFacebook() async {
+    try {
+      await firebaseService.signInWithFacebook();
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
 }

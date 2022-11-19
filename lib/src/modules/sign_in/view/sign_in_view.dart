@@ -64,10 +64,69 @@ class _SignInViewState extends State<SignInView> {
     }
   }
 
+  void onSignInWithAppleButtonPressed() async {
+    try {
+      await controller.signInWithApple();
+
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
+  void onSignInWithFacebookButtonPressed() async {
+    try {
+      await controller.signInWithFacebook();
+
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final platform = Theme.of(context).platform;
+
+    final List<Widget> signInActions = [
+      TextButton(
+        onPressed: () {
+          Modular.to.pushNamed(AppRoutes.forgotPassword);
+        },
+        child: Text(
+          'Esqueci minha senha',
+          style: AppFonts.interNormal(context),
+        ),
+      ),
+      ElevatedButton(
+        onPressed: onSignInButtonPressed,
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40,
+              vertical: 10,
+            )),
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                'Entrar',
+                style: AppFonts.interNormal(context),
+              ),
+      ),
+    ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -109,40 +168,16 @@ class _SignInViewState extends State<SignInView> {
                       controller.passwordValidator(password ?? ''),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Modular.to.pushNamed(AppRoutes.forgotPassword);
-                      },
-                      child: Text(
-                        'Esqueci minha senha',
-                        style: AppFonts.interNormal(context),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: onSignInButtonPressed,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 10,
-                          )),
-                      child: isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              'Entrar',
-                              style: AppFonts.interNormal(context),
-                            ),
-                    ),
-                  ],
-                ),
+                if (mediaQuery.size.width >= 400)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: signInActions,
+                  ),
+                if (mediaQuery.size.width < 400)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: signInActions,
+                  ),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
@@ -158,7 +193,7 @@ class _SignInViewState extends State<SignInView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 115,
+                      width: mediaQuery.size.width / 2 - 100,
                       height: 1,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
@@ -171,7 +206,7 @@ class _SignInViewState extends State<SignInView> {
                     ),
                     const SizedBox(width: 10),
                     Container(
-                      width: 115,
+                      width: mediaQuery.size.width / 2 - 100,
                       height: 1,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
@@ -179,13 +214,13 @@ class _SignInViewState extends State<SignInView> {
                 ),
                 const SizedBox(height: 40),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (platform == TargetPlatform.iOS)
                       SocialButton(
                         color: const Color(0xFF000000),
                         icon: FontAwesomeIcons.apple,
-                        onTap: () {},
+                        onTap: onSignInWithAppleButtonPressed,
                       ),
                     if (platform == TargetPlatform.android)
                       SocialButton(
@@ -193,16 +228,18 @@ class _SignInViewState extends State<SignInView> {
                         icon: FontAwesomeIcons.google,
                         onTap: onSignInWithGoogleButtonPressed,
                       ),
-                    SocialButton(
-                      color: const Color(0xFF1977F3),
-                      icon: FontAwesomeIcons.facebook,
-                      onTap: () {},
-                    ),
-                    SocialButton(
-                      color: const Color(0xFF1DA1F2),
-                      icon: FontAwesomeIcons.twitter,
-                      onTap: () {},
-                    ),
+                    if (false)
+                      SocialButton(
+                        color: const Color(0xFF1977F3),
+                        icon: FontAwesomeIcons.facebook,
+                        onTap: onSignInWithFacebookButtonPressed,
+                      ),
+                    if (false)
+                      SocialButton(
+                        color: const Color(0xFF1DA1F2),
+                        icon: FontAwesomeIcons.twitter,
+                        onTap: () {},
+                      ),
                   ],
                 ),
               ],

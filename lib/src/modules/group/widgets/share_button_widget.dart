@@ -11,7 +11,7 @@ class ShareButton extends StatelessWidget {
 
   void shareGroup() async {
     await Share.share(
-      'Venha participar do nosso Amigo Secreto https://example$groupId.com',
+      'Venha participar do nosso Amigo Secreto https://meuamigosecreto.viniciosdb.com.br/?link=https://meuamigosecreto.viniciosdb.com.br/joingroup&apn=br.com.viniciosdb.meu_amigo_secreto&group=$groupId',
     );
   }
 

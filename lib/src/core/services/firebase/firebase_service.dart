@@ -1,21 +1,149 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:twitter_login/twitter_login.dart';
 
+import '../../shared/routes/app_routes.dart';
 import 'firebase_service_exception.dart';
 
 class FirebaseService {
   final FirebaseAuth firebaseAuth;
   final FirebaseFirestore firebaseFirestore;
   final GoogleSignIn googleSignIn;
+  final FirebaseDynamicLinks dynamicLinks;
 
   FirebaseService({
     required this.firebaseAuth,
     required this.firebaseFirestore,
     required this.googleSignIn,
+    required this.dynamicLinks,
   });
+
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      final Uri uri = dynamicLinkData.link;
+      final queryParams = uri.queryParameters;
+      if (queryParams.isNotEmpty) {
+        Modular.to.pushReplacementNamed(
+          AppRoutes.joinGroup,
+          arguments: queryParams['group'],
+        );
+      }
+    }).onError((error) {
+      print(error);
+    });
+  }
+
+  Future<UserCredential> signInWithTwitter() async {
+    final twitterLogin = TwitterLogin(
+        apiKey: '<your consumer key>',
+        apiSecretKey: ' <your consumer secret>',
+        redirectURI: '<your_scheme>://');
+
+    final authResult = await twitterLogin.login();
+
+    final twitterAuthCredential = TwitterAuthProvider.credential(
+      accessToken: authResult.authToken!,
+      secret: authResult.authTokenSecret!,
+    );
+
+    return await FirebaseAuth.instance
+        .signInWithCredential(twitterAuthCredential);
+  }
+
+  Future<void> signInWithFacebook() async {
+    try {
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+      final firebaseAccount = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+
+      final CollectionReference userCollection =
+          firebaseFirestore.collection('users');
+
+      final users = await userCollection
+          .where('uid', isEqualTo: firebaseAccount.user?.uid)
+          .get();
+
+      if (users.docs.isEmpty) {
+        await userCollection.add({
+          'name': firebaseAccount.user!.displayName,
+          'email': firebaseAccount.user!.email,
+          'uid': firebaseAccount.user!.uid,
+          'avatar': firebaseAccount.user!.photoURL,
+          'phone': firebaseAccount.user!.phoneNumber,
+        });
+      }
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
+
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Future<void> signInWithApple() async {
+    try {
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+      final firebaseAccount =
+          await firebaseAuth.signInWithCredential(oauthCredential);
+
+      final CollectionReference userCollection =
+          firebaseFirestore.collection('users');
+
+      final users = await userCollection
+          .where('uid', isEqualTo: firebaseAccount.user?.uid)
+          .get();
+
+      if (users.docs.isEmpty) {
+        await userCollection.add({
+          'name': firebaseAccount.user!.displayName,
+          'email': firebaseAccount.user!.email,
+          'uid': firebaseAccount.user!.uid,
+          'avatar': firebaseAccount.user!.photoURL,
+          'phone': firebaseAccount.user!.phoneNumber,
+        });
+      }
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
 
   Future<void> signInWithGoogle() async {
     try {
@@ -349,7 +477,6 @@ class FirebaseService {
     String? image,
   }) async {
     try {
-
       final groups = await firebaseFirestore.collection('groups').doc(id).get();
 
       await groups.reference.update({

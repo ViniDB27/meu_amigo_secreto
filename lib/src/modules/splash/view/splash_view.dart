@@ -19,6 +19,8 @@ class _SplashViewState extends State<SplashView> {
   void verifyIfExistUserLogged() async {
     await Future.delayed(const Duration(seconds: 1));
 
+    controller.initDynamicLinks();
+
     final isLogged = await controller.userIsLogged();
 
     if (isLogged) {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -10,6 +11,7 @@ import 'modules/edit_group/edit_group_module.dart';
 import 'modules/forgot_password/forgot_password_module.dart';
 import 'modules/group/group_module.dart';
 import 'modules/home/home_module.dart';
+import 'modules/join_group/join_group_module.dart';
 import 'modules/sign_in/sign_in_module.dart';
 import 'modules/sign_up/sign_up_module.dart';
 import 'modules/splash/splash_module.dart';
@@ -21,6 +23,7 @@ class AppModule extends Module {
         Bind.instance<FirebaseAuth>(FirebaseAuth.instance),
         Bind.instance<FirebaseFirestore>(FirebaseFirestore.instance),
         Bind.instance<GoogleSignIn>(GoogleSignIn()),
+        Bind.instance<FirebaseDynamicLinks>(FirebaseDynamicLinks.instance),
 
         //services
         Bind.factory<FirebaseService>(
@@ -28,6 +31,7 @@ class AppModule extends Module {
             firebaseAuth: i(),
             firebaseFirestore: i(),
             googleSignIn: i(),
+            dynamicLinks: i(),
           ),
         ),
       ];
@@ -42,5 +46,6 @@ class AppModule extends Module {
         ModuleRoute(AppRoutes.createGroup, module: CreateGroupModule()),
         ModuleRoute(AppRoutes.editGroup, module: EditGroupModule()),
         ModuleRoute(AppRoutes.group, module: GroupModule()),
+        ModuleRoute(AppRoutes.joinGroup, module: JoinGroupModule()),
       ];
 }

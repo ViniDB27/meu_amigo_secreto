@@ -49,6 +49,11 @@ dependencies:
   share_plus: ^6.3.0
   firebase_dynamic_links: ^5.0.6
   google_sign_in: ^5.4.2
+  sign_in_with_apple: ^4.2.0
+  crypto: ^3.0.2
+  flutter_facebook_auth: ^5.0.6
+  twitter_login: ^4.2.3
+  url_launcher: ^6.1.6
 
 dev_dependencies:
   flutter_test:
@@ -69,9 +74,9 @@ dev_dependencies:
 flutter_icons:
   ios: true
   android: true
-  image_path_android: assets/images/nica.png
-  image_path_ios: assets/images/nica.png
-  adaptive_icon_background: "#FFFFFF"
+  image_path_android: assets/images/nica-fundo-branco-2000x2000.png
+  image_path_ios: assets/images/nica-fundo-branco-108x108.png
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

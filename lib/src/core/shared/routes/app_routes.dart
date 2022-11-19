@@ -7,5 +7,6 @@ class AppRoutes {
   static const String createGroup = '/create-group/';
   static const String editGroup = '/edit-group/';
   static const String group = '/group/';
+  static const String joinGroup = '/join-group/';
   static const String profile = '/profile/';
 }
