@@ -6,7 +6,9 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:meu_amigo_secreto/src/core/shared/routes/app_routes.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:twitter_login/twitter_login.dart';
 
@@ -405,6 +407,8 @@ class FirebaseService {
             ],
           });
         }
+      } else {
+        Modular.to.pushReplacementNamed(AppRoutes.signIn);
       }
     } on FirebaseException catch (error) {
       throw FirebaseServiceException(error.code);
