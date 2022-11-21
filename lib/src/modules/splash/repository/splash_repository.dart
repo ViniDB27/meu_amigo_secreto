@@ -19,8 +19,4 @@ class SplashRepository {
       rethrow;
     }
   }
-
-  Future<void> initDynamicLinks() async {
-    await firebaseService.initDynamicLinks();
-  }
 }

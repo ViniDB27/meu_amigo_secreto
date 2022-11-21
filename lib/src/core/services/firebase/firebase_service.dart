@@ -6,12 +6,10 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:twitter_login/twitter_login.dart';
 
-import '../../shared/routes/app_routes.dart';
 import 'firebase_service_exception.dart';
 
 class FirebaseService {
@@ -26,21 +24,6 @@ class FirebaseService {
     required this.googleSignIn,
     required this.dynamicLinks,
   });
-
-  Future<void> initDynamicLinks() async {
-    dynamicLinks.onLink.listen((dynamicLinkData) {
-      final Uri uri = dynamicLinkData.link;
-      final queryParams = uri.queryParameters;
-      if (queryParams.isNotEmpty) {
-        Modular.to.pushReplacementNamed(
-          AppRoutes.joinGroup,
-          arguments: queryParams['group'],
-        );
-      }
-    }).onError((error) {
-      print(error);
-    });
-  }
 
   Future<UserCredential> signInWithTwitter() async {
     final twitterLogin = TwitterLogin(
@@ -389,6 +372,40 @@ class FirebaseService {
           "members": value['members'],
         };
       });
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
+
+  Future<void> joinGroup({
+    required String id,
+  }) async {
+    try {
+      final user = await getCurrentUser();
+
+      if (user != null) {
+        final group =
+            await firebaseFirestore.collection('groups').doc(id).get();
+        final members = group['members'];
+
+        final memberExists =
+            members.where((member) => member['id'] == user['id']).isEmpty;
+
+        if (memberExists) {
+          await group.reference.update({
+            'members': [
+              ...members,
+              {
+                "id": user['id'],
+                "name": user['name'],
+                "email": user['email'],
+                "suggestions": [],
+                "friend": null,
+              }
+            ],
+          });
+        }
+      }
     } on FirebaseException catch (error) {
       throw FirebaseServiceException(error.code);
     }

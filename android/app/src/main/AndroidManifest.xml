@@ -32,8 +32,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="meuamigosecreto.viniciosdb.com.br" />
-                <data android:scheme="https" />
+                <data android:scheme="http" android:pathPrefix="/joingroup/" android:host="meuamigosecreto.viniciosdb.com.br" />
+                <data android:scheme="https" android:pathPrefix="/joingroup/" android:host="meuamigosecreto.viniciosdb.com.br" />
             </intent-filter>
 
         </activity>

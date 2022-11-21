@@ -13,8 +13,4 @@ class SplashController {
       rethrow;
     }
   }
-
-  Future<void> initDynamicLinks() async {
-    await repository.initDynamicLinks();
-  }
 }
