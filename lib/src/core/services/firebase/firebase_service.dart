@@ -388,24 +388,29 @@ class FirebaseService {
       if (user != null) {
         final group =
             await firebaseFirestore.collection('groups').doc(id).get();
-        final members = group['members'];
 
-        final memberExists =
-            members.where((member) => member['id'] == user['id']).isEmpty;
+        final bool isDraw = group['isDraw'] as bool;
 
-        if (memberExists) {
-          await group.reference.update({
-            'members': [
-              ...members,
-              {
-                "id": user['id'],
-                "name": user['name'],
-                "email": user['email'],
-                "suggestions": [],
-                "friend": null,
-              }
-            ],
-          });
+        if (!isDraw) {
+          final members = group['members'];
+
+          final memberExists =
+              members.where((member) => member['id'] == user['id']).isEmpty;
+
+          if (memberExists) {
+            await group.reference.update({
+              'members': [
+                ...members,
+                {
+                  "id": user['id'],
+                  "name": user['name'],
+                  "email": user['email'],
+                  "suggestions": [],
+                  "friend": null,
+                }
+              ],
+            });
+          }
         }
       } else {
         Modular.to.pushReplacementNamed(AppRoutes.signIn);

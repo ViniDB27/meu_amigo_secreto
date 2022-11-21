@@ -58,7 +58,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
     try {
       await controller.joinGroup(id: groupModel!.id);
 
-      Modular.to.pushNamed(AppRoutes.home);
+      Modular.to.pushReplacementNamed(AppRoutes.home);
     } on FirebaseServiceException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -201,44 +201,59 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                       ],
                     ),
                     const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () =>
-                              Modular.to.pushReplacementNamed(AppRoutes.home),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.error,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 50,
-                              vertical: 10,
-                            ),
-                          ),
-                          child: Text(
-                            'Recusar',
-                            style: AppFonts.interNormal(context).copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: joinGroup,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 50,
-                              vertical: 10,
-                            ),
-                          ),
-                          child: Text(
-                            'Aceitar',
-                            style: AppFonts.interNormal(context),
-                          ),
-                        ),
-                      ],
-                    )
+                    groupModel != null && groupModel!.isDraw
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                                "Grupo fechado, sorteio realizado",
+                                style: GoogleFonts.itim().copyWith(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onBackground,
+                                ),
+                              ),
+                          ],
+                        )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => Modular.to
+                                    .pushReplacementNamed(AppRoutes.home),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.error,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Recusar',
+                                  style: AppFonts.interNormal(context).copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: joinGroup,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Aceitar',
+                                  style: AppFonts.interNormal(context),
+                                ),
+                              ),
+                            ],
+                          )
                   ],
                 ),
               ),
