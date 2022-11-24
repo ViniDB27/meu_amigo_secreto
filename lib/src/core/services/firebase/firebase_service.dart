@@ -20,7 +20,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> signOut({required String email}) async {
+  Future<void> signOut() async {
     try {
       return firebaseAuthenticationService.signOut();
     } on FirebaseServiceException {

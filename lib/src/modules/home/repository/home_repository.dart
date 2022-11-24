@@ -25,4 +25,11 @@ class HomeRepository {
     }
   }
 
+  Future<void> signOut() async {
+    try {
+      return await firebaseService.signOut();
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
 }

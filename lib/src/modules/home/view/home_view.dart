@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/shared/routes/app_routes.dart';
+import '../../../core/shared/widgets/app_drawer_widget.dart';
 import '../../../core/shared/widgets/notification_button_widget.dart';
 import '../controller/home_controller.dart';
 import '../widgets/group_card_widget.dart';
@@ -32,21 +33,29 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Meu amigo secreto'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: const [
           NotificationButton(),
         ],
       ),
+      drawer: const AppDrawer(),
       body: SizedBox(
         width: mediaQuery.size.width,
         height: mediaQuery.size.height,
         child: RefreshIndicator(
           onRefresh: () => controller.getMyGroups(context),
-          child: ListView.builder(
-            itemCount: controller.groups.length,
-            itemBuilder: (_, i) => GroupCard(group: controller.groups[i]),
-          ),
+          child: controller.loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: controller.groups.length,
+                  itemBuilder: (_, i) => GroupCard(group: controller.groups[i]),
+                ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

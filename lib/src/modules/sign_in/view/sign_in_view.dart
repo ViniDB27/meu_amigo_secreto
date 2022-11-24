@@ -1,8 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../../../core/shared/routes/app_routes.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 
@@ -19,67 +19,9 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  final formStateKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  final controller = Modular.get<SignInController>();
-
-  bool isLoading = false;
-
-  void onSignInButtonPressed() async {
-    setState(() => isLoading = true);
-
-    try {
-      if (formStateKey.currentState?.validate() == true) {
-        await controller.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-
-        await Modular.to.pushReplacementNamed(AppRoutes.home);
-      }
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  void onSignInWithGoogleButtonPressed() async {
-    try {
-      await controller.signInWithGoogle();
-
-      await Modular.to.pushReplacementNamed(AppRoutes.home);
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  void onSignInWithAppleButtonPressed() async {
-    try {
-      await controller.signInWithApple();
-
-      await Modular.to.pushReplacementNamed(AppRoutes.home);
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<SignInController>(context);
     final mediaQuery = MediaQuery.of(context);
     final platform = Theme.of(context).platform;
 
@@ -94,18 +36,16 @@ class _SignInViewState extends State<SignInView> {
         ),
       ),
       ElevatedButton(
-        onPressed: onSignInButtonPressed,
+        onPressed: () => controller.signInWithEmailAndPassword(context),
         style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             padding: const EdgeInsets.symmetric(
               horizontal: 40,
               vertical: 10,
             )),
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
+        child: controller.loading
+            ? const CircularProgressIndicator(
+                color: Colors.white,
               )
             : Text(
                 'Entrar',
@@ -127,7 +67,7 @@ class _SignInViewState extends State<SignInView> {
         height: mediaQuery.size.height,
         child: SingleChildScrollView(
           child: Form(
-            key: formStateKey,
+            key: controller.formStateKey,
             child: Column(
               children: [
                 ClipRRect(
@@ -141,7 +81,7 @@ class _SignInViewState extends State<SignInView> {
                 TextFieldCustom(
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  controller: emailController,
+                  controller: controller.emailController,
                   fieldValidator: (email) =>
                       controller.emailValidator(email ?? ''),
                 ),
@@ -149,7 +89,7 @@ class _SignInViewState extends State<SignInView> {
                 TextFieldCustom(
                   label: 'Senha',
                   obscureText: true,
-                  controller: passwordController,
+                  controller: controller.passwordController,
                   fieldValidator: (password) =>
                       controller.passwordValidator(password ?? ''),
                 ),
@@ -206,13 +146,13 @@ class _SignInViewState extends State<SignInView> {
                       SocialButton(
                         color: const Color(0xFF000000),
                         icon: FontAwesomeIcons.apple,
-                        onTap: onSignInWithAppleButtonPressed,
+                        onTap: () => controller.signInWithApple(context),
                       ),
                     if (platform == TargetPlatform.android)
                       SocialButton(
                         color: const Color(0xFFEA4335),
                         icon: FontAwesomeIcons.google,
-                        onTap: onSignInWithGoogleButtonPressed,
+                        onTap: () => controller.signInWithGoogle(context),
                       ),
                   ],
                 ),

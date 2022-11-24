@@ -1,24 +1,66 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../../../core/services/firebase/firebase_service_exception.dart';
+import '../../../core/shared/routes/app_routes.dart';
+import '../../../core/shared/utils/snack_bar.dart';
 import '../repository/sign_in_repository.dart';
 
-class SignInController {
+class SignInController with ChangeNotifier {
   final SignInRepository repository;
 
   SignInController(this.repository);
 
-  Future<void> signInWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
+  final formStateKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool loading = false;
+
+  Future<void> signInWithEmailAndPassword(BuildContext context) async {
     try {
-      await repository.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      if (formStateKey.currentState!.validate()) {
+        loading = true;
+        notifyListeners();
+        await repository.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        await Modular.to.pushReplacementNamed(AppRoutes.home);
+      }
+    } on FirebaseServiceException catch (e) {
+      snackBar(
+        context: context,
+        message: e.toString(),
       );
-    } on FirebaseServiceException {
-      rethrow;
+    } finally {
+      loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      await repository.signInWithGoogle();
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      snackBar(
+        context: context,
+        message: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signInWithApple(BuildContext context) async {
+    try {
+      await repository.signInWithApple();
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      snackBar(
+        context: context,
+        message: e.toString(),
+      );
     }
   }
 
@@ -35,21 +77,4 @@ class SignInController {
     }
     return null;
   }
-
-  Future<void> signInWithGoogle() async {
-    try {
-      await repository.signInWithGoogle();
-    } on FirebaseServiceException {
-      rethrow;
-    }
-  }
-
-  Future<void> signInWithApple() async {
-    try {
-      await repository.signInWithApple();
-    } on FirebaseServiceException {
-      rethrow;
-    }
-  }
-
 }
