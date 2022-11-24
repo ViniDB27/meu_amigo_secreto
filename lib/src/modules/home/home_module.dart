@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
 import 'controller/home_controller.dart';
 import 'repository/home_repository.dart';
@@ -15,6 +16,12 @@ class HomeModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => const HomeView()),
+        ChildRoute(
+          '/',
+          child: (context, args) => ChangeNotifierProvider(
+            create: (_) => Modular.get<HomeController>(),
+            child: const HomeView(),
+          ),
+        ),
       ];
 }

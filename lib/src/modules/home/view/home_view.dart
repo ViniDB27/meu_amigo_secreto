@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../../../core/shared/routes/app_routes.dart';
 import '../../../core/shared/widgets/notification_button_widget.dart';
 import '../controller/home_controller.dart';
-import '../model/group_model.dart';
 import '../widgets/group_card_widget.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,33 +15,18 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  List<GroupModel> groups = [];
-
-  final controller = Modular.get<HomeController>();
-
-  Future<void> loadGroups() async {
-    try {
-      final list = await controller.getMyGroups();
-      setState(() {
-        groups = list;
-      });
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    loadGroups();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<HomeController>(context, listen: false).getMyGroups(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<HomeController>(context);
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
@@ -58,10 +42,10 @@ class _HomeViewState extends State<HomeView> {
         width: mediaQuery.size.width,
         height: mediaQuery.size.height,
         child: RefreshIndicator(
-          onRefresh: loadGroups,
+          onRefresh: () => controller.getMyGroups(context),
           child: ListView.builder(
-            itemCount: groups.length,
-            itemBuilder: (_, i) => GroupCard(group: groups[i]),
+            itemCount: controller.groups.length,
+            itemBuilder: (_, i) => GroupCard(group: controller.groups[i]),
           ),
         ),
       ),

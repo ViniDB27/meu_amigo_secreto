@@ -1,18 +1,28 @@
+import 'package:flutter/material.dart';
+
 import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../model/group_model.dart';
 import '../repository/home_repository.dart';
 
-class HomeController {
+class HomeController with ChangeNotifier {
   final HomeRepository repository;
 
   HomeController(this.repository);
-  Future<List<GroupModel>> getMyGroups() async {
+
+  List<GroupModel> _groups = [];
+
+  List<GroupModel> get groups => [..._groups];
+
+  Future<void> getMyGroups(BuildContext context) async {
     try {
-      return repository.getMyGroups();
-    } on FirebaseServiceException {
-      rethrow;
+      _groups = await repository.getMyGroups();
+      notifyListeners();
+    } on FirebaseServiceException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
     }
   }
-
-
 }
