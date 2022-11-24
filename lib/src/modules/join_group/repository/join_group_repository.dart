@@ -11,7 +11,7 @@ class JoinGroupRepository {
     required String id,
   }) async {
     try {
-      final groupMap = await firebaseService.getGroupById(id: id);
+      final groupMap = await firebaseService.getGroupById(id);
 
       return GroupModel.fromMap(groupMap);
     } on FirebaseServiceException {
@@ -23,7 +23,7 @@ class JoinGroupRepository {
     required String id,
   }) async {
     try {
-      await firebaseService.joinGroup(id: id);
+      await firebaseService.joinGroup(id);
     } on FirebaseServiceException {
       rethrow;
     }

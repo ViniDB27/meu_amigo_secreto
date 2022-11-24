@@ -35,12 +35,4 @@ class SignInRepository {
       rethrow;
     }
   }
-
-  Future<void> signInWithFacebook() async {
-    try {
-      await firebaseService.signInWithFacebook();
-    } on FirebaseServiceException {
-      rethrow;
-    }
-  }
 }

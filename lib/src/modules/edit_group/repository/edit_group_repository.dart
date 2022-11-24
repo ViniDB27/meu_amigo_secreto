@@ -11,7 +11,7 @@ class EditGroupRepository {
     required String id,
   }) async {
     try {
-      final groupMap = await firebaseService.getGroupById(id: id);
+      final groupMap = await firebaseService.getGroupById(id);
 
       return GroupModel.fromMap(groupMap);
     } on FirebaseServiceException {

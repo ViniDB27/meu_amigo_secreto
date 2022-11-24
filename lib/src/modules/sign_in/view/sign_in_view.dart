@@ -78,20 +78,6 @@ class _SignInViewState extends State<SignInView> {
     }
   }
 
-  void onSignInWithFacebookButtonPressed() async {
-    try {
-      await controller.signInWithFacebook();
-
-      await Modular.to.pushReplacementNamed(AppRoutes.home);
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -227,18 +213,6 @@ class _SignInViewState extends State<SignInView> {
                         color: const Color(0xFFEA4335),
                         icon: FontAwesomeIcons.google,
                         onTap: onSignInWithGoogleButtonPressed,
-                      ),
-                    if (false)
-                      SocialButton(
-                        color: const Color(0xFF1977F3),
-                        icon: FontAwesomeIcons.facebook,
-                        onTap: onSignInWithFacebookButtonPressed,
-                      ),
-                    if (false)
-                      SocialButton(
-                        color: const Color(0xFF1DA1F2),
-                        icon: FontAwesomeIcons.twitter,
-                        onTap: () {},
                       ),
                   ],
                 ),

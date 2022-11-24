@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../core/shared/routes/app_routes.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 import '../../../core/shared/theme/app_images.dart';
 import '../controller/splash_controller.dart';
@@ -16,24 +15,10 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> {
   final controller = Modular.get<SplashController>();
 
-  void verifyIfExistUserLogged() async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    final isLogged = await controller.userIsLogged();
-
-    // await controller.initDynamicLinkTerminatedState();
-
-    if (isLogged) {
-      await Modular.to.pushReplacementNamed(AppRoutes.home);
-    } else {
-      await Modular.to.pushReplacementNamed(AppRoutes.signIn);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    verifyIfExistUserLogged();
+    controller.verifyIfExistUserLogged();
   }
 
   @override

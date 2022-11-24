@@ -13,7 +13,7 @@ class GroupRepository {
     required String id,
   }) async {
     try {
-      final groupMap = await firebaseService.getGroupById(id: id);
+      final groupMap = await firebaseService.getGroupById(id);
 
       return GroupModel.fromMap(groupMap);
     } on FirebaseServiceException {
@@ -45,7 +45,7 @@ class GroupRepository {
     try {
       final user = await firebaseService.getCurrentUser();
 
-      final groupMap = await firebaseService.getGroupById(id: id);
+      final groupMap = await firebaseService.getGroupById(id);
       final groupModel = GroupModel.fromMap(groupMap);
 
       return groupModel.members.firstWhere(
@@ -61,7 +61,7 @@ class GroupRepository {
     required String friendId,
   }) async {
     try {
-      final groupMap = await firebaseService.getGroupById(id: groupId);
+      final groupMap = await firebaseService.getGroupById(groupId);
       final groupModel = GroupModel.fromMap(groupMap);
 
       return groupModel.members.firstWhere((member) => member.id == friendId);
@@ -128,9 +128,7 @@ class GroupRepository {
     required String id,
   }) async {
     try {
-      await firebaseService.sortedFriends(
-        id: id,
-      );
+      await firebaseService.sortedFriends(id);
     } on FirebaseServiceException {
       rethrow;
     }

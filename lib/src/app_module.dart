@@ -4,6 +4,8 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'core/services/firebase/firebase_modules/authentication/firebase_authentication_service.dart';
+import 'core/services/firebase/firebase_modules/group/firebase_group_service.dart';
 import 'core/services/firebase/firebase_service.dart';
 import 'core/shared/routes/app_routes.dart';
 import 'modules/create_group/create_group_module.dart';
@@ -26,12 +28,23 @@ class AppModule extends Module {
         Bind.instance<FirebaseDynamicLinks>(FirebaseDynamicLinks.instance),
 
         //services
-        Bind.factory<FirebaseService>(
-          (i) => FirebaseService(
+        Bind.factory<FirebaseAuthenticationService>(
+          (i) => FirebaseAuthenticationService(
             firebaseAuth: i(),
             firebaseFirestore: i(),
             googleSignIn: i(),
-            dynamicLinks: i(),
+          ),
+        ),
+        Bind.factory<FirebaseGroupService>(
+          (i) => FirebaseGroupService(
+            firebaseFirestore: i(),
+            firebaseAuthenticationService: i(),
+          ),
+        ),
+        Bind.factory<FirebaseService>(
+          (i) => FirebaseService(
+            firebaseAuthenticationService: i(),
+            firebaseGroupService: i(),
           ),
         ),
       ];
