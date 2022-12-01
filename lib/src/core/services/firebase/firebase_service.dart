@@ -165,9 +165,31 @@ class FirebaseService {
     }
   }
 
+  Future<void> deleteGroup(String id) async {
+    try {
+      return firebaseGroupService.deleteGroup(id);
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
+
   Future<void> joinGroup(String id) async {
     try {
       return firebaseGroupService.joinGroup(id);
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
+
+  Future<void> removeMemberGroup({
+    required String groupId,
+    required String memberId,
+  }) async {
+    try {
+      return firebaseGroupService.removeMemberGroup(
+        groupId: groupId,
+        memberId: memberId,
+      );
     } on FirebaseServiceException {
       rethrow;
     }

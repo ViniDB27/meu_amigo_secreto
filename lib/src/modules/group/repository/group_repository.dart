@@ -9,9 +9,7 @@ class GroupRepository {
 
   GroupRepository(this.firebaseService);
 
-  Future<GroupModel> getGroupById({
-    required String id,
-  }) async {
+  Future<GroupModel> getGroupById(String id) async {
     try {
       final groupMap = await firebaseService.getGroupById(id);
 
@@ -21,13 +19,11 @@ class GroupRepository {
     }
   }
 
-  Future<bool> isOwnerGroup({
-    required String id,
-  }) async {
+  Future<bool> isOwnerGroup(String id) async {
     try {
       final user = await firebaseService.getCurrentUser();
 
-      final groupModel = await getGroupById(id: id);
+      final groupModel = await getGroupById(id);
 
       if (user?['id'] == groupModel.owner.id) {
         return true;
@@ -39,9 +35,7 @@ class GroupRepository {
     }
   }
 
-  Future<MemberModel> getIHowMember({
-    required String id,
-  }) async {
+  Future<MemberModel> getIHowMember(String id) async {
     try {
       final user = await firebaseService.getCurrentUser();
 
@@ -70,11 +64,9 @@ class GroupRepository {
     }
   }
 
-  Future<FriendModel?> myFriend({
-    required String id,
-  }) async {
+  Future<FriendModel?> myFriend(String id) async {
     try {
-      final friendMember = await getIHowMember(id: id);
+      final friendMember = await getIHowMember(id);
 
       return friendMember.friend;
     } on FirebaseServiceException {
@@ -86,7 +78,7 @@ class GroupRepository {
     required String id,
   }) async {
     try {
-      final member = await getIHowMember(id: id);
+      final member = await getIHowMember(id);
 
       return member.suggestions;
     } on FirebaseServiceException {
@@ -124,11 +116,23 @@ class GroupRepository {
     }
   }
 
-  Future<void> sortedFriends({
-    required String id,
-  }) async {
+  Future<void> sortedFriends(String id) async {
     try {
       await firebaseService.sortedFriends(id);
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
+
+  Future<void> removeMemberGroup({
+    required String groupId,
+    required String memberId,
+  }) async {
+    try {
+      await firebaseService.removeMemberGroup(
+        groupId: groupId,
+        memberId: memberId,
+      );
     } on FirebaseServiceException {
       rethrow;
     }

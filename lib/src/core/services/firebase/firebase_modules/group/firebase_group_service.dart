@@ -169,6 +169,16 @@ class FirebaseGroupService {
     }
   }
 
+  Future<void> deleteGroup(String id) async {
+    try {
+      final groups = await firebaseFirestore.collection('groups').doc(id).get();
+
+      await groups.reference.delete();
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
+
   Future<void> joinGroup(String id) async {
     try {
       final user = await firebaseAuthenticationService.getCurrentUser();
@@ -199,6 +209,35 @@ class FirebaseGroupService {
               ],
             });
           }
+        }
+      } else {
+        Modular.to.pushReplacementNamed(AppRoutes.signIn);
+      }
+    } on FirebaseException catch (error) {
+      throw FirebaseServiceException(error.code);
+    }
+  }
+
+  Future<void> removeMemberGroup({
+    required String groupId,
+    required String memberId,
+  }) async {
+    try {
+      final group =
+          await firebaseFirestore.collection('groups').doc(groupId).get();
+
+      final bool isDraw = group['isDraw'] as bool;
+
+      if (!isDraw) {
+        final members = group['members'];
+
+        final memberExists =
+            members.where((member) => member['id'] != memberId);
+
+        if (memberExists) {
+          await group.reference.update({
+            'members': members,
+          });
         }
       } else {
         Modular.to.pushReplacementNamed(AppRoutes.signIn);

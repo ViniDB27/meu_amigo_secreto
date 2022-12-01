@@ -7,9 +7,9 @@ class JoinGroupRepository {
 
   JoinGroupRepository(this.firebaseService);
 
-  Future<GroupModel> getGroupById({
-    required String id,
-  }) async {
+  Future<GroupModel> getGroupById(
+    String id,
+  ) async {
     try {
       final groupMap = await firebaseService.getGroupById(id);
 
@@ -19,9 +19,7 @@ class JoinGroupRepository {
     }
   }
 
-  Future<void> joinGroup({
-    required String id,
-  }) async {
+  Future<void> joinGroup(String id) async {
     try {
       await firebaseService.joinGroup(id);
     } on FirebaseServiceException {

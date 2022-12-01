@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
 import 'controller/sign_up_controller.dart';
 import 'repository/sign_up_repository.dart';
@@ -15,6 +16,12 @@ class SignUpModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => const SignUpView()),
+        ChildRoute(
+          '/',
+          child: (context, args) => ChangeNotifierProvider(
+            create: (_) => Modular.get<SignUpController>(),
+            child: const SignUpView(),
+          ),
+        ),
       ];
 }

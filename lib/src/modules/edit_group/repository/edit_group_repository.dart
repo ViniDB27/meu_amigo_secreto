@@ -52,4 +52,12 @@ class EditGroupRepository {
       rethrow;
     }
   }
+
+  Future<void> deleteGroup(String id) async {
+    try {
+      await firebaseService.deleteGroup(id);
+    } on FirebaseServiceException {
+      rethrow;
+    }
+  }
 }

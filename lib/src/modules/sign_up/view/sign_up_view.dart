@@ -1,57 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:meu_amigo_secreto/src/core/shared/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 import '../../../core/shared/theme/app_images.dart';
 import '../../../core/shared/widgets/text_field_custom_widget.dart';
 import '../controller/sign_up_controller.dart';
 
-class SignUpView extends StatefulWidget {
+class SignUpView extends StatelessWidget {
   const SignUpView({Key? key}) : super(key: key);
 
   @override
-  State<SignUpView> createState() => _SignUpViewState();
-}
-
-class _SignUpViewState extends State<SignUpView> {
-  final formStateKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-
-  final controller = Modular.get<SignUpController>();
-
-  bool isLoading = false;
-
-  void onSignUpButtonPressed() async {
-    setState(() => isLoading = true);
-
-    try {
-      if (formStateKey.currentState?.validate() == true) {
-        await controller.createNewAccount(
-          name: nameController.text,
-          email: emailController.text,
-          password: passwordController.text,
-        );
-
-         await Modular.to.pushReplacementNamed(AppRoutes.home);
-      }
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<SignUpController>(context);
     final mediaQuery = MediaQuery.of(context);
     final platform = Theme.of(context).platform;
 
@@ -68,7 +29,7 @@ class _SignUpViewState extends State<SignUpView> {
         height: mediaQuery.size.height,
         child: SingleChildScrollView(
           child: Form(
-            key: formStateKey,
+            key: controller.formStateKey,
             child: Column(
               children: [
                 ClipRRect(
@@ -82,7 +43,7 @@ class _SignUpViewState extends State<SignUpView> {
                 TextFieldCustom(
                   label: 'Nome',
                   keyboardType: TextInputType.emailAddress,
-                  controller: nameController,
+                  controller: controller.nameController,
                   fieldValidator: (name) =>
                       controller.nameValidator(name ?? ''),
                 ),
@@ -90,7 +51,7 @@ class _SignUpViewState extends State<SignUpView> {
                 TextFieldCustom(
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  controller: emailController,
+                  controller: controller.emailController,
                   fieldValidator: (email) =>
                       controller.emailValidator(email ?? ''),
                 ),
@@ -98,7 +59,7 @@ class _SignUpViewState extends State<SignUpView> {
                 TextFieldCustom(
                   label: 'Senha',
                   obscureText: true,
-                  controller: passwordController,
+                  controller: controller.passwordController,
                   fieldValidator: (password) =>
                       controller.passwordValidator(password ?? ''),
                 ),
@@ -106,11 +67,11 @@ class _SignUpViewState extends State<SignUpView> {
                 TextFieldCustom(
                   label: 'Confirmar Senha',
                   obscureText: true,
-                  controller: confirmPasswordController,
+                  controller: controller.confirmPasswordController,
                   fieldValidator: (cPassword) =>
                       controller.confirmPasswordValidator(
                     cPassword ?? '',
-                    passwordController.text,
+                    controller.passwordController.text,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -118,7 +79,7 @@ class _SignUpViewState extends State<SignUpView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: onSignUpButtonPressed,
+                      onPressed: () => controller.createNewAccount(context),
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primaryContainer,
@@ -126,7 +87,7 @@ class _SignUpViewState extends State<SignUpView> {
                             horizontal: 40,
                             vertical: 10,
                           )),
-                      child: isLoading
+                      child: controller.loading
                           ? const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,

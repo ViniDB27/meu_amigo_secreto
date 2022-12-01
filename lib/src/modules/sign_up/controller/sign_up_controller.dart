@@ -1,26 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../../../core/services/firebase/firebase_service_exception.dart';
+import '../../../core/shared/routes/app_routes.dart';
+import '../../../core/shared/utils/snack_bar.dart';
 import '../repository/sign_up_repository.dart';
 
-class SignUpController {
+class SignUpController with ChangeNotifier {
   final SignUpRepository repository;
 
   SignUpController(this.repository);
 
-  Future<void> createNewAccount({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
+  final formStateKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool loading = false;
+
+  Future<void> createNewAccount(BuildContext context) async {
     try {
-      await repository.createNewAccount(
-        name: name,
-        email: email,
-        password: password,
+      if (formStateKey.currentState!.validate()) {
+        await repository.createNewAccount(
+          name: nameController.text,
+          email: emailController.text,
+          password: passwordController.text,
+        );
+      }
+
+      await Modular.to.pushReplacementNamed(AppRoutes.home);
+    } on FirebaseServiceException catch (e) {
+      snackBar(
+        context: context,
+        message: e.toString(),
       );
-    } on FirebaseServiceException {
-      rethrow;
+    } finally {
+      loading = false;
+      notifyListeners();
     }
   }
 

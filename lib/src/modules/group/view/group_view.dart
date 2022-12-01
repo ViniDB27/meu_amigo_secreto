@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../controller/group_controller.dart';
@@ -28,153 +29,21 @@ class GroupView extends StatefulWidget {
 }
 
 class _GroupViewState extends State<GroupView> {
-  final controller = Modular.get<GroupController>();
-
-  bool isDrawLoading = false;
-  bool isLoading = false;
-  bool isOwner = false;
-
-  List<TextEditingController> suggestionFieldList = [TextEditingController()];
-  List<dynamic> friendSuggestions = [];
-
-  GroupModel? groupModel;
-  FriendModel? friend;
-
-  void loadFriend() async {
-    try {
-      final myFriend = await controller.myFriend(id: widget.groupId);
-      setState(() {
-        friend = myFriend;
-      });
-
-      if (myFriend != null) loadFriendSuggestion();
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  void addNewField() {
-    final suggestController = TextEditingController();
-
-    setState(() {
-      suggestionFieldList.add(suggestController);
-    });
-  }
-
-  void saveMySuggestions() {
-    controller.saveMySuggestions(
-      id: widget.groupId,
-      suggestions: suggestionFieldList
-          .map((e) => e.text)
-          .where((element) => element.isNotEmpty)
-          .toList(),
-    );
-  }
-
-  void removeField(int hashCode) {
-    suggestionFieldList.removeWhere((element) => element.hashCode == hashCode);
-    saveMySuggestions();
-    setState(() {});
-  }
-
-  void loadSuggestions() async {
-    try {
-      final suggestions = await controller.getMySuggestions(id: widget.groupId);
-      setState(() {
-        suggestionFieldList = suggestions
-            .map((e) => TextEditingController(text: e.toString()))
-            .toList();
-      });
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  Future<void> loadGroupData() async {
-    try {
-      setState(() => isLoading = true);
-      final group = await controller.getGroupById(id: widget.groupId);
-      setState(() {
-        groupModel = group;
-      });
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  verifyOwner() async {
-    try {
-      final isOwnerGroup = await controller.isOwnerGroup(id: widget.groupId);
-      setState(() {
-        isOwner = isOwnerGroup;
-      });
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  void sortedFriends() async {
-    try {
-      setState(() => isDrawLoading = true);
-      await controller.sortedFriends(id: widget.groupId);
-      loadAllData();
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isDrawLoading = false);
-    }
-  }
-
-  void loadFriendSuggestion() async {
-    if (friend != null && groupModel != null) {
-      final suggestions = await controller.getSuggestionsMyFriend(
-        friendId: friend!.id,
-        groupId: groupModel!.id,
-      );
-
-      setState(() {
-        friendSuggestions = suggestions;
-      });
-    }
-  }
-
-  Future<void> loadAllData() async {
-    loadGroupData();
-    verifyOwner();
-    loadFriend();
-    loadSuggestions();
-  }
-
   @override
   void initState() {
     super.initState();
-    loadAllData();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<GroupController>(context, listen: false).initializeStates(
+        context,
+        widget.groupId,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<GroupController>(context);
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
@@ -182,11 +51,11 @@ class _GroupViewState extends State<GroupView> {
         title: const Text('Meu amigo secreto'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
-          if (isOwner) ShareButton(groupId: widget.groupId),
-          if (isOwner) EditButton(id: widget.groupId),
+          ShareButton(groupId: widget.groupId),
+          if (controller.isOwner) EditButton(id: widget.groupId),
         ],
       ),
-      body: isLoading
+      body: controller.loading
           ? Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primaryContainer,
@@ -199,40 +68,50 @@ class _GroupViewState extends State<GroupView> {
               width: mediaQuery.size.width,
               height: mediaQuery.size.height,
               child: RefreshIndicator(
-                onRefresh: loadAllData,
+                onRefresh: () => controller.initializeStates(
+                  context,
+                  widget.groupId,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      GroupHeader(groupModel: groupModel),
+                      GroupHeader(groupModel: controller.groupModel),
                       const SizedBox(height: 40),
-                      GroupInformation(groupModel: groupModel),
+                      GroupInformation(groupModel: controller.groupModel),
                       const SizedBox(height: 40),
-                      if (isOwner &&
-                          groupModel != null &&
-                          !groupModel!.isDraw &&
-                          groupModel!.members.length > 1)
+                      if (controller.isOwner &&
+                          controller.groupModel != null &&
+                          !controller.groupModel!.isDraw &&
+                          controller.groupModel!.members.length > 1)
                         DrawButton(
-                          isLoading: isDrawLoading,
-                          onPressed: sortedFriends,
+                          isLoading: controller.loadingSortedNames,
+                          onPressed: () => controller.sortedFriends(context),
                         ),
                       const SizedBox(height: 40),
                       Suggestion(
-                        suggestionFieldList: suggestionFieldList,
-                        addNewField: addNewField,
-                        removeField: removeField,
-                        onEditingComplete: saveMySuggestions,
+                        suggestionFieldList: controller.suggestionFieldList,
+                        addNewField: controller.addNewField,
+                        removeField: (hashCode) => controller.removeField(
+                          context,
+                          hashCode,
+                        ),
+                        onEditingComplete: () =>
+                            controller.saveMySuggestions(context),
                       ),
                       const SizedBox(height: 20),
-                      if (friend != null) const YourFriend(),
+                      if (controller.friendModel != null) const YourFriend(),
                       const SizedBox(height: 20),
-                      if (friend != null)
+                      if (controller.friendModel != null)
                         FriendCard(
-                          friend: friend!,
-                          suggestion: friendSuggestions,
+                          friend: controller.friendModel!,
+                          suggestion: controller.friendSuggestions,
                         ),
                       const SizedBox(height: 40),
-                      AllMembers(members: groupModel?.members ?? []),
+                      AllMembers(
+                        members: controller.groupModel?.members ?? [],
+                        removeButton: controller.isOwner,
+                      ),
                       const SizedBox(height: 60),
                     ],
                   ),

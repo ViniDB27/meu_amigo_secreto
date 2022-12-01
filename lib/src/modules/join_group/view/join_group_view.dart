@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:meu_amigo_secreto/src/core/shared/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 import '../../../core/shared/theme/app_images.dart';
 import '../controller/join_group_controller.dart';
-import '../model/group_model.dart';
 
 class JoinGroupView extends StatefulWidget {
   const JoinGroupView({
@@ -22,60 +21,25 @@ class JoinGroupView extends StatefulWidget {
 }
 
 class _JoinGroupViewState extends State<JoinGroupView> {
-  final controller = Modular.get<JoinGroupController>();
-
-  bool isLoading = false;
-
-  GroupModel? groupModel;
-
-  Future<void> loadGroupData() async {
-    try {
-      setState(() => isLoading = true);
-
-      final groupId = widget.uri.queryParameters['group'];
-
-      if (groupId != null) {
-        final group = await controller.getGroupById(id: groupId);
-
-        setState(() {
-          groupModel = group;
-        });
-      } else {
-        Modular.to.pushReplacementNamed(AppRoutes.home);
-      }
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  void joinGroup() async {
-    try {
-      await controller.joinGroup(id: groupModel!.id);
-
-      Modular.to.pushReplacementNamed(AppRoutes.home);
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
   @override
   void initState() {
-    loadGroupData();
     super.initState();
+
+    if (widget.uri.queryParameters['group'] != null) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Provider.of<JoinGroupController>(context, listen: false).getGroupById(
+          context,
+          widget.uri.queryParameters['group']!,
+        );
+      });
+    } else {
+      Modular.to.pushReplacementNamed(AppRoutes.home);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<JoinGroupController>(context);
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
@@ -84,7 +48,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
         title: const Text('Meu amigo secreto'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: isLoading
+      body: controller.loading
           ? Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primaryContainer,
@@ -102,7 +66,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                 child: Column(
                   children: [
                     Text(
-                      groupModel?.name ?? 'Nome do Grupo',
+                      controller.groupModel?.name ?? 'Nome do Grupo',
                       style: GoogleFonts.itim().copyWith(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -121,7 +85,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Data: ${groupModel?.eventDate}",
+                          "Data: ${controller.groupModel?.eventDate}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -129,7 +93,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                           ),
                         ),
                         Text(
-                          "Hora: ${groupModel?.eventTime}",
+                          "Hora: ${controller.groupModel?.eventTime}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -143,7 +107,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Rua: ${groupModel?.address}",
+                          "Rua: ${controller.groupModel?.address}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -151,7 +115,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                           ),
                         ),
                         Text(
-                          "Nº: ${groupModel?.number}",
+                          "Nº: ${controller.groupModel?.number}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -162,7 +126,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      "Bairro: ${groupModel?.neighborhood}",
+                      "Bairro: ${controller.groupModel?.neighborhood}",
                       style: GoogleFonts.inter().copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
@@ -171,7 +135,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      "Cidade: ${groupModel?.city}",
+                      "Cidade: ${controller.groupModel?.city}",
                       style: GoogleFonts.inter().copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
@@ -183,7 +147,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "CEP: ${groupModel?.zipCode}",
+                          "CEP: ${controller.groupModel?.zipCode}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -191,7 +155,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                           ),
                         ),
                         Text(
-                          "Valor: ${groupModel?.value}",
+                          "Valor: ${controller.groupModel?.value}",
                           style: GoogleFonts.inter().copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -201,20 +165,23 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                       ],
                     ),
                     const SizedBox(height: 40),
-                    groupModel != null && groupModel!.isDraw
+                    controller.groupModel != null &&
+                            controller.groupModel!.isDraw
                         ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
                                 "Grupo fechado, sorteio realizado",
                                 style: GoogleFonts.itim().copyWith(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onBackground,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
                                 ),
                               ),
-                          ],
-                        )
+                            ],
+                          )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -237,7 +204,7 @@ class _JoinGroupViewState extends State<JoinGroupView> {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: joinGroup,
+                                onPressed: () => controller.joinGroup(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Theme.of(context)
                                       .colorScheme

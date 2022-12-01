@@ -1,57 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 import '../../../core/shared/theme/app_images.dart';
 import '../../../core/shared/widgets/text_field_custom_widget.dart';
 import '../controller/forgot_password_controller.dart';
 
-class ForgotPasswordView extends StatefulWidget {
+class ForgotPasswordView extends StatelessWidget {
   const ForgotPasswordView({Key? key}) : super(key: key);
 
   @override
-  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
-}
-
-class _ForgotPasswordViewState extends State<ForgotPasswordView> {
-  final formStateKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-
-  final controller = Modular.get<ForgotPasswordController>();
-
-  bool isLoading = false;
-
-  void onForgotPasswordButtonPressed() async {
-    setState(() => isLoading = true);
-
-    try {
-      if (formStateKey.currentState?.validate() == true) {
-        await controller.forgotPassword(
-          email: emailController.text,
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("E-mail enviado com sucesso!"),
-          ),
-        );
-
-        Modular.to.pop();
-      }
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<ForgotPasswordController>(context);
     final mediaQuery = MediaQuery.of(context);
     final platform = Theme.of(context).platform;
 
@@ -68,7 +29,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         height: mediaQuery.size.height,
         child: SingleChildScrollView(
           child: Form(
-            key: formStateKey,
+            key: controller.formStateKey,
             child: Column(
               children: [
                 ClipRRect(
@@ -94,7 +55,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 TextFieldCustom(
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  controller: emailController,
+                  controller: controller.emailController,
                   fieldValidator: (email) =>
                       controller.emailValidator(email ?? ''),
                 ),
@@ -103,7 +64,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: onForgotPasswordButtonPressed,
+                      onPressed: () => controller.forgotPassword(context),
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primaryContainer,
@@ -111,7 +72,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             horizontal: 40,
                             vertical: 10,
                           )),
-                      child: isLoading
+                      child: controller.loading
                           ? const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,

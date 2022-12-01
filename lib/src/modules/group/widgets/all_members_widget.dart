@@ -8,9 +8,11 @@ class AllMembers extends StatelessWidget {
   const AllMembers({
     Key? key,
     required this.members,
+    this.removeButton = false,
   }) : super(key: key);
 
   final List<MemberModel> members;
+  final bool removeButton;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,10 @@ class AllMembers extends StatelessWidget {
             itemCount: members.length,
             itemBuilder: (ctx, i) => Container(
               margin: const EdgeInsets.only(right: 10),
-              child: MemberCard(member: members[i]),
+              child: MemberCard(
+                member: members[i],
+                removeButton: removeButton,
+              ),
             ),
           ),
         ),

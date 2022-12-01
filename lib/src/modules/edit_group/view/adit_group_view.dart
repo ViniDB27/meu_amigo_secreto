@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
-import '../../../core/shared/routes/app_routes.dart';
 import '../../../core/shared/theme/app_fonts.dart';
 import '../../../core/shared/theme/app_images.dart';
+import '../../../core/shared/utils/alert_dialog.dart';
 import '../../../core/shared/utils/mask.dart';
 import '../../../core/shared/widgets/text_field_custom_widget.dart';
 import '../controller/edit_group_controller.dart';
-import '../model/group_model.dart';
 
 class EditGroupView extends StatefulWidget {
   const EditGroupView({
@@ -24,97 +22,21 @@ class EditGroupView extends StatefulWidget {
 }
 
 class _EditGroupViewState extends State<EditGroupView> {
-  final formStateKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final drawDateController = TextEditingController();
-  final valueController = TextEditingController();
-  final eventDateController = TextEditingController();
-  final eventTimeController = TextEditingController();
-  final addressController = TextEditingController();
-  final neighborhoodController = TextEditingController();
-  final numberController = TextEditingController();
-  final cityController = TextEditingController();
-  final zipCodeController = TextEditingController();
-
-  final controller = Modular.get<EditGroupController>();
-
-  GroupModel? groupModel;
-
-  bool isLoading = false;
-
-  Future<void> loadGroupData() async {
-    try {
-      setState(() => isLoading = true);
-      final group = await controller.getGroupById(id: widget.id);
-      setState(() {
-        groupModel = group;
-        nameController.text = group.name;
-        drawDateController.text = group.drawDate;
-        valueController.text = group.value;
-        eventDateController.text = group.eventDate;
-        eventTimeController.text = group.eventTime;
-        addressController.text = group.address;
-        neighborhoodController.text = group.neighborhood;
-        numberController.text = group.number;
-        cityController.text = group.city;
-        zipCodeController.text = group.zipCode;
-      });
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  void onSubmitButtonPressed() async {
-    setState(() => isLoading = true);
-
-    try {
-      if (formStateKey.currentState?.validate() == true) {
-        await controller.editGroup(
-          id: widget.id,
-          name: nameController.text,
-          drawDate: drawDateController.text,
-          value: valueController.text,
-          eventDate: eventDateController.text,
-          eventTime: eventTimeController.text,
-          address: addressController.text,
-          neighborhood: neighborhoodController.text,
-          number: numberController.text,
-          city: cityController.text,
-          zipCode: zipCodeController.text,
-        );
-
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Grupo Editado com Sucesso!"),
-        ));
-
-        await Modular.to.pushReplacementNamed(AppRoutes.home);
-      }
-    } on FirebaseServiceException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    loadGroupData();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<EditGroupController>(context, listen: false).getGroupById(
+        context,
+        widget.id,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<EditGroupController>(context);
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
@@ -131,7 +53,7 @@ class _EditGroupViewState extends State<EditGroupView> {
         height: mediaQuery.size.height,
         child: SingleChildScrollView(
           child: Form(
-            key: formStateKey,
+            key: controller.formStateKey,
             child: Column(
               children: [
                 const SizedBox(height: 10),
@@ -153,7 +75,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                 const SizedBox(height: 40),
                 TextFieldCustom(
                   label: 'Nome do Grupo',
-                  controller: nameController,
+                  controller: controller.nameController,
                   fieldValidator: (value) =>
                       controller.fieldIsNotEmptyValidator(value ?? ''),
                 ),
@@ -166,7 +88,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                       child: TextFieldCustom(
                         label: 'Data do Sorteio',
                         keyboardType: TextInputType.number,
-                        controller: drawDateController,
+                        controller: controller.drawDateController,
                         inputFormatters: [Mask.dateMask],
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
@@ -178,7 +100,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                         label: 'Valor Sujerido',
                         keyboardType: TextInputType.number,
                         inputFormatters: [Mask.moneyMask],
-                        controller: valueController,
+                        controller: controller.valueController,
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
                       ),
@@ -203,7 +125,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                       child: TextFieldCustom(
                         label: 'Data',
                         keyboardType: TextInputType.number,
-                        controller: eventDateController,
+                        controller: controller.eventDateController,
                         inputFormatters: [Mask.dateMask],
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
@@ -214,7 +136,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                       child: TextFieldCustom(
                         label: 'Hora',
                         keyboardType: TextInputType.number,
-                        controller: eventTimeController,
+                        controller: controller.eventTimeController,
                         inputFormatters: [Mask.timeMask],
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
@@ -225,7 +147,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                 const SizedBox(height: 20),
                 TextFieldCustom(
                   label: 'Rua',
-                  controller: addressController,
+                  controller: controller.addressController,
                   fieldValidator: (value) =>
                       controller.fieldIsNotEmptyValidator(value ?? ''),
                 ),
@@ -237,7 +159,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                       width: (mediaQuery.size.width - 60) / 2,
                       child: TextFieldCustom(
                         label: 'Bairro',
-                        controller: neighborhoodController,
+                        controller: controller.neighborhoodController,
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
                       ),
@@ -247,7 +169,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                       child: TextFieldCustom(
                         label: 'N°',
                         keyboardType: TextInputType.number,
-                        controller: numberController,
+                        controller: controller.numberController,
                         fieldValidator: (value) =>
                             controller.fieldIsNotEmptyValidator(value ?? ''),
                       ),
@@ -257,40 +179,71 @@ class _EditGroupViewState extends State<EditGroupView> {
                 const SizedBox(height: 20),
                 TextFieldCustom(
                   label: 'Cidade',
-                  controller: cityController,
+                  controller: controller.cityController,
                   fieldValidator: (value) =>
                       controller.fieldIsNotEmptyValidator(value ?? ''),
                 ),
                 const SizedBox(height: 20),
                 TextFieldCustom(
                   label: 'CEP',
-                  controller: zipCodeController,
+                  controller: controller.zipCodeController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [Mask.cepMask],
                   fieldValidator: (value) =>
                       controller.fieldIsNotEmptyValidator(value ?? ''),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: onSubmitButtonPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: (mediaQuery.size.width / 2) - 100,
-                      vertical: 10,
-                    ),
-                  ),
-                  child: isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          color: Colors.white,
+                          onPressed: () => alertDialog(
+                            context: context,
+                            title: 'Excluir Grupo',
+                            content: 'Deseja realmente excluir o grupo?',
+                            onPressedConfirm: () =>
+                                controller.deleteGroup(context),
+                            onPressedCancel: () =>
+                                Navigator.pop(context, 'Cancelar'),
                           ),
-                        )
-                      : Text(
-                          'Editar Grupo',
-                          style: AppFonts.interNormal(context),
+                          icon: const Icon(
+                            Icons.delete,
+                          ),
                         ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => controller.editGroup(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: (mediaQuery.size.width / 2) - 100,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: controller.loading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              'Editar Grupo',
+                              style: AppFonts.interNormal(context),
+                            ),
+                    ),
+                    const SizedBox(width: 5),
+                  ],
                 ),
                 const SizedBox(height: 60),
               ],

@@ -11,14 +11,9 @@ import '../../../core/shared/widgets/text_field_custom_widget.dart';
 import '../controller/sign_in_controller.dart';
 import '../widgets/social_button_widget.dart';
 
-class SignInView extends StatefulWidget {
+class SignInView extends StatelessWidget {
   const SignInView({Key? key}) : super(key: key);
 
-  @override
-  State<SignInView> createState() => _SignInViewState();
-}
-
-class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<SignInController>(context);

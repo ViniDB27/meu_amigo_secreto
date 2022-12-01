@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:provider/provider.dart';
 
 import 'controller/group_controller.dart';
 import 'repository/group_repository.dart';
@@ -15,7 +16,14 @@ class GroupModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/',
-            child: (context, args) => GroupView(groupId: args.data.toString())),
+        ChildRoute(
+          '/',
+          child: (context, args) => ChangeNotifierProvider(
+            create: (_) => Modular.get<GroupController>(),
+            child: GroupView(
+              groupId: args.data.toString(),
+            ),
+          ),
+        ),
       ];
 }
