@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/shared/routes/app_routes.dart';
@@ -16,13 +17,28 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final BannerAd myBanner = BannerAd(
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    size: AdSize.fullBanner,
+    request: const AdRequest(),
+    listener: const BannerAdListener(),
+  );
+
   @override
   void initState() {
     super.initState();
 
+    myBanner.load();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<HomeController>(context, listen: false).getMyGroups(context);
     });
+  }
+
+  @override
+  void dispose() {
+    myBanner.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,18 +60,36 @@ class _HomeViewState extends State<HomeView> {
       body: SizedBox(
         width: mediaQuery.size.width,
         height: mediaQuery.size.height,
-        child: RefreshIndicator(
-          onRefresh: () => controller.getMyGroups(context),
-          child: controller.loading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: controller.groups.length,
-                  itemBuilder: (_, i) => GroupCard(group: controller.groups[i]),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              height: 60,
+              width: mediaQuery.size.width,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: Center(
+                child: AdWidget(
+                  ad: myBanner,
                 ),
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => controller.getMyGroups(context),
+                child: controller.loading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: controller.groups.length,
+                        itemBuilder: (_, i) =>
+                            GroupCard(group: controller.groups[i]),
+                      ),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

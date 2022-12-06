@@ -52,6 +52,7 @@ dependencies:
   crypto: ^3.0.2
   flutter_facebook_auth: ^5.0.6
   provider: ^6.0.4
+  google_mobile_ads: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/shared/theme/app_fonts.dart';
@@ -22,9 +23,18 @@ class EditGroupView extends StatefulWidget {
 }
 
 class _EditGroupViewState extends State<EditGroupView> {
+  final BannerAd myBanner = BannerAd(
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    size: AdSize.fullBanner,
+    request: const AdRequest(),
+    listener: const BannerAdListener(),
+  );
+
   @override
   void initState() {
     super.initState();
+
+    myBanner.load();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<EditGroupController>(context, listen: false).getGroupById(
@@ -32,6 +42,12 @@ class _EditGroupViewState extends State<EditGroupView> {
         widget.id,
       );
     });
+  }
+
+  @override
+  void dispose() {
+    myBanner.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,210 +61,231 @@ class _EditGroupViewState extends State<EditGroupView> {
         title: const Text('Meu amigo secreto'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
+      body: SizedBox(
         width: mediaQuery.size.width,
         height: mediaQuery.size.height,
-        child: SingleChildScrollView(
-          child: Form(
-            key: controller.formStateKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                Text(
-                  'Editar Grupo',
-                  style: GoogleFonts.itim().copyWith(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              height: 60,
+              width: mediaQuery.size.width,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: Center(
+                child: AdWidget(
+                  ad: myBanner,
                 ),
-                const SizedBox(height: 20),
-                CircleAvatar(
-                  radius: 80,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  backgroundImage: const AssetImage(AppImages.nica),
-                ),
-                const SizedBox(height: 40),
-                TextFieldCustom(
-                  label: 'Nome do Grupo',
-                  controller: controller.nameController,
-                  fieldValidator: (value) =>
-                      controller.fieldIsNotEmptyValidator(value ?? ''),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'Data do Sorteio',
-                        keyboardType: TextInputType.number,
-                        controller: controller.drawDateController,
-                        inputFormatters: [Mask.dateMask],
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'Valor Sugerido',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [Mask.moneyMask],
-                        controller: controller.valueController,
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                Text(
-                  'Dados do Evento',
-                  style: GoogleFonts.itim().copyWith(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'Data',
-                        keyboardType: TextInputType.number,
-                        controller: controller.eventDateController,
-                        inputFormatters: [Mask.dateMask],
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'Hora',
-                        keyboardType: TextInputType.number,
-                        controller: controller.eventTimeController,
-                        inputFormatters: [Mask.timeMask],
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextFieldCustom(
-                  label: 'Rua',
-                  controller: controller.addressController,
-                  fieldValidator: (value) =>
-                      controller.fieldIsNotEmptyValidator(value ?? ''),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'Bairro',
-                        controller: controller.neighborhoodController,
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                    SizedBox(
-                      width: (mediaQuery.size.width - 60) / 2,
-                      child: TextFieldCustom(
-                        label: 'N°',
-                        keyboardType: TextInputType.number,
-                        controller: controller.numberController,
-                        fieldValidator: (value) =>
-                            controller.fieldIsNotEmptyValidator(value ?? ''),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextFieldCustom(
-                  label: 'Cidade',
-                  controller: controller.cityController,
-                  fieldValidator: (value) =>
-                      controller.fieldIsNotEmptyValidator(value ?? ''),
-                ),
-                const SizedBox(height: 20),
-                TextFieldCustom(
-                  label: 'CEP',
-                  controller: controller.zipCodeController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [Mask.cepMask],
-                  fieldValidator: (value) =>
-                      controller.fieldIsNotEmptyValidator(value ?? ''),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.error,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          color: Colors.white,
-                          onPressed: () => alertDialog(
-                            context: context,
-                            title: 'Excluir Grupo',
-                            content: 'Deseja realmente excluir o grupo?',
-                            onPressedConfirm: () =>
-                                controller.deleteGroup(context),
-                            onPressedCancel: () =>
-                                Navigator.pop(context, 'Cancelar'),
-                          ),
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => controller.editGroup(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: (mediaQuery.size.width / 2) - 100,
-                          vertical: 10,
-                        ),
-                      ),
-                      child: controller.loading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              'Editar Grupo',
-                              style: AppFonts.interNormal(context),
-                            ),
-                    ),
-                    const SizedBox(width: 5),
-                  ],
-                ),
-                const SizedBox(height: 60),
-              ],
+              ),
             ),
-          ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: controller.formStateKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Text(
+                          'Editar Grupo',
+                          style: GoogleFonts.itim().copyWith(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        CircleAvatar(
+                          radius: 80,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                          backgroundImage: const AssetImage(AppImages.nica),
+                        ),
+                        const SizedBox(height: 40),
+                        TextFieldCustom(
+                          label: 'Nome do Grupo',
+                          controller: controller.nameController,
+                          fieldValidator: (value) =>
+                              controller.fieldIsNotEmptyValidator(value ?? ''),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'Data do Sorteio',
+                                keyboardType: TextInputType.number,
+                                controller: controller.drawDateController,
+                                inputFormatters: [Mask.dateMask],
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'Valor Sugerido',
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [Mask.moneyMask],
+                                controller: controller.valueController,
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
+                        Text(
+                          'Dados do Evento',
+                          style: GoogleFonts.itim().copyWith(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'Data',
+                                keyboardType: TextInputType.number,
+                                controller: controller.eventDateController,
+                                inputFormatters: [Mask.dateMask],
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'Hora',
+                                keyboardType: TextInputType.number,
+                                controller: controller.eventTimeController,
+                                inputFormatters: [Mask.timeMask],
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        TextFieldCustom(
+                          label: 'Rua',
+                          controller: controller.addressController,
+                          fieldValidator: (value) =>
+                              controller.fieldIsNotEmptyValidator(value ?? ''),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'Bairro',
+                                controller: controller.neighborhoodController,
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                            SizedBox(
+                              width: (mediaQuery.size.width - 60) / 2,
+                              child: TextFieldCustom(
+                                label: 'N°',
+                                keyboardType: TextInputType.number,
+                                controller: controller.numberController,
+                                fieldValidator: (value) => controller
+                                    .fieldIsNotEmptyValidator(value ?? ''),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        TextFieldCustom(
+                          label: 'Cidade',
+                          controller: controller.cityController,
+                          fieldValidator: (value) =>
+                              controller.fieldIsNotEmptyValidator(value ?? ''),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFieldCustom(
+                          label: 'CEP',
+                          controller: controller.zipCodeController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [Mask.cepMask],
+                          fieldValidator: (value) =>
+                              controller.fieldIsNotEmptyValidator(value ?? ''),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.error,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: IconButton(
+                                  color: Colors.white,
+                                  onPressed: () => alertDialog(
+                                    context: context,
+                                    title: 'Excluir Grupo',
+                                    content:
+                                        'Deseja realmente excluir o grupo?',
+                                    onPressedConfirm: () =>
+                                        controller.deleteGroup(context),
+                                    onPressedCancel: () =>
+                                        Navigator.pop(context, 'Cancelar'),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => controller.editGroup(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: (mediaQuery.size.width / 2) - 100,
+                                  vertical: 10,
+                                ),
+                              ),
+                              child: controller.loading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Editar Grupo',
+                                      style: AppFonts.interNormal(context),
+                                    ),
+                            ),
+                            const SizedBox(width: 5),
+                          ],
+                        ),
+                        const SizedBox(height: 60),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

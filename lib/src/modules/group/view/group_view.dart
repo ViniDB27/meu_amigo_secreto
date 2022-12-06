@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/services/firebase/firebase_service_exception.dart';
+import '../../../core/shared/utils/alert_dialog.dart';
 import '../controller/group_controller.dart';
-import '../model/friend_model.dart';
-import '../model/group_model.dart';
 import '../widgets/all_members_widget.dart';
 import '../widgets/draw_button_widget.dart';
 import '../widgets/edit_button_widget.dart';
@@ -29,9 +27,18 @@ class GroupView extends StatefulWidget {
 }
 
 class _GroupViewState extends State<GroupView> {
+  final BannerAd myBanner = BannerAd(
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    size: AdSize.fullBanner,
+    request: const AdRequest(),
+    listener: const BannerAdListener(),
+  );
+
   @override
   void initState() {
     super.initState();
+
+    myBanner.load();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<GroupController>(context, listen: false).initializeStates(
@@ -39,6 +46,12 @@ class _GroupViewState extends State<GroupView> {
         widget.groupId,
       );
     });
+  }
+
+  @override
+  void dispose() {
+    myBanner.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,69 +68,99 @@ class _GroupViewState extends State<GroupView> {
           if (controller.isOwner) EditButton(id: widget.groupId),
         ],
       ),
-      body: controller.loading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-            )
-          : Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
+      body: Container(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              height: 60,
               width: mediaQuery.size.width,
-              height: mediaQuery.size.height,
-              child: RefreshIndicator(
-                onRefresh: () => controller.initializeStates(
-                  context,
-                  widget.groupId,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      GroupHeader(groupModel: controller.groupModel),
-                      const SizedBox(height: 40),
-                      GroupInformation(groupModel: controller.groupModel),
-                      const SizedBox(height: 40),
-                      if (controller.isOwner &&
-                          controller.groupModel != null &&
-                          !controller.groupModel!.isDraw &&
-                          controller.groupModel!.members.length > 1)
-                        DrawButton(
-                          isLoading: controller.loadingSortedNames,
-                          onPressed: () => controller.sortedFriends(context),
-                        ),
-                      const SizedBox(height: 40),
-                      Suggestion(
-                        suggestionFieldList: controller.suggestionFieldList,
-                        addNewField: controller.addNewField,
-                        removeField: (hashCode) => controller.removeField(
-                          context,
-                          hashCode,
-                        ),
-                        onEditingComplete: () =>
-                            controller.saveMySuggestions(context),
-                      ),
-                      const SizedBox(height: 20),
-                      if (controller.friendModel != null) const YourFriend(),
-                      const SizedBox(height: 20),
-                      if (controller.friendModel != null)
-                        FriendCard(
-                          friend: controller.friendModel!,
-                          suggestion: controller.friendSuggestions,
-                        ),
-                      const SizedBox(height: 40),
-                      AllMembers(
-                        members: controller.groupModel?.members ?? [],
-                        removeButton: controller.isOwner,
-                      ),
-                      const SizedBox(height: 60),
-                    ],
-                  ),
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: Center(
+                child: AdWidget(
+                  ad: myBanner,
                 ),
               ),
             ),
+            Expanded(
+              child: controller.loading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: RefreshIndicator(
+                        onRefresh: () => controller.initializeStates(
+                          context,
+                          widget.groupId,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              GroupHeader(groupModel: controller.groupModel),
+                              const SizedBox(height: 40),
+                              GroupInformation(
+                                  groupModel: controller.groupModel),
+                              const SizedBox(height: 40),
+                              if (controller.isOwner &&
+                                  controller.groupModel != null &&
+                                  !controller.groupModel!.isDraw &&
+                                  controller.groupModel!.members.length > 1)
+                                DrawButton(
+                                  isLoading: controller.loadingSortedNames,
+                                  onPressed: () => alertDialog(
+                                    context: context,
+                                    title: 'Sortear Nomes',
+                                    content:
+                                        'Você vai sortear os nomes dos participantes. Deseja continuar?',
+                                    onPressedConfirm: () =>
+                                        controller.sortedFriends(context),
+                                    onPressedCancel: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                  ),
+                                ),
+                              const SizedBox(height: 40),
+                              Suggestion(
+                                suggestionFieldList:
+                                    controller.suggestionFieldList,
+                                addNewField: controller.addNewField,
+                                removeField: (hashCode) =>
+                                    controller.removeField(
+                                  context,
+                                  hashCode,
+                                ),
+                                onEditingComplete: () =>
+                                    controller.saveMySuggestions(context),
+                              ),
+                              const SizedBox(height: 20),
+                              if (controller.friendModel != null)
+                                const YourFriend(),
+                              const SizedBox(height: 20),
+                              if (controller.friendModel != null)
+                                FriendCard(
+                                  friend: controller.friendModel!,
+                                  suggestion: controller.friendSuggestions,
+                                ),
+                              const SizedBox(height: 40),
+                              AllMembers(
+                                members: controller.groupModel?.members ?? [],
+                                removeButton: controller.isOwner,
+                              ),
+                              const SizedBox(height: 60),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

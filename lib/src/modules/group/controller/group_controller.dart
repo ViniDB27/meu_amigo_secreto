@@ -56,6 +56,7 @@ class GroupController with ChangeNotifier {
   Future<void> sortedFriends(BuildContext context) async {
     try {
       loadingSortedNames = true;
+      Navigator.pop(context, 'Cancel');
       notifyListeners();
 
       await repository.sortedFriends(groupModel!.id);
@@ -68,6 +69,7 @@ class GroupController with ChangeNotifier {
     } finally {
       loadingSortedNames = false;
       notifyListeners();
+      initializeStates(context, groupModel!.id);
     }
   }
 
