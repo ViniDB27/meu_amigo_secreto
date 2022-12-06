@@ -97,7 +97,7 @@ class _EditGroupViewState extends State<EditGroupView> {
                     SizedBox(
                       width: (mediaQuery.size.width - 60) / 2,
                       child: TextFieldCustom(
-                        label: 'Valor Sujerido',
+                        label: 'Valor Sugerido',
                         keyboardType: TextInputType.number,
                         inputFormatters: [Mask.moneyMask],
                         controller: controller.valueController,

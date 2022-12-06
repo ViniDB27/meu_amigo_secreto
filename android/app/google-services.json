@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "315865547000-si0366bpm31lm1qrrb6jhnnfdff2iuue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.viniciosdb.meu_amigo_secreto",
+            "certificate_hash": "54b19950644f562782b9f64a9e991f726c5665d0"
+          }
+        },
+        {
           "client_id": "315865547000-0c390ndde15gi1s5ifg28pblprp57s40.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "315865547000-0c390ndde15gi1s5ifg28pblprp57s40.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "315865547000-r7p7pve9vaaa8prvfopaa9lujtuufqip.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "br.com.viniciosdb.meuAmigoSecreto"
+              }
             }
           ]
         }
