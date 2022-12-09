@@ -28,7 +28,7 @@ class GroupView extends StatefulWidget {
 
 class _GroupViewState extends State<GroupView> {
   final BannerAd myBanner = BannerAd(
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    adUnitId: 'ca-app-pub-4588189843597373/6492857828',
     size: AdSize.fullBanner,
     request: const AdRequest(),
     listener: const BannerAdListener(),
